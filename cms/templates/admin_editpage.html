@@ -1,0 +1,27 @@
+{% extends "admin_base.html" %}
+{% block active2 %}class="active"{% end %}
+{% block maincontent %}
+<h2 class="sub-header">Push New Common Page</h2>
+<form role="form" method="POST" action="/admin/editpage" enctype="multipart/form-data">
+  <div class="form-group">
+    <label for="exampleInputEmail1">Title</label>
+    <input type="input" class="form-control" id="exampleInputEmail1" placeholder="Enter title" name="ptitle">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Content</label>
+    <textarea rows="16" class="form-control" id="exampleInputPassword1" placeholder="Enter content with markdown" name="pcontent"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="exampleInputFile">File input</label>
+    <input type="file" name="file" id="exampleInputFile">
+    <p class="help-block">Example block-level help text here.</p>
+  </div>
+  <div class="checkbox">
+    <label>
+      <input type="checkbox"> Check me out
+    </label>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="reset" class="btn btn-default">Reset</button>
+</form>
+{% end %}

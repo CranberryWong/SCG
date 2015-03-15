@@ -1,0 +1,36 @@
+{% extends "home_base.html" %}
+{% block maincontent %}
+<div class="margintopfixed">
+  <div class="row">
+    <div class="col-lg-12">
+      <h2 class="featurette-heading abouttitlefixed">Join us</h2>
+      <form role="form" action="/contact" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="exampleInputName1">Your name</label>
+          <input type="input" class="form-control" id="exampleInputName1" placeholder="Name" name="cname">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputCollege">Your College</label>
+          <input type="input" class="form-control" id="exampleInputCollege" placeholder="College" name="ccollege">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Email address</label>
+          <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email" name="cemail">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputReason1">Reason</label>
+          <textarea class="form-control" rows="3"  placeholder="Your reason" name="creason"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="exampleInputFile">Your resume</label>
+          <input type="file" id="exampleInputFile" name="file">
+          <p class="help-block">Example block-level help text here.</p>
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+    </div>
+  </div><!-- /.row -->
+</div>
+
+{% end %}

@@ -1,0 +1,29 @@
+{% extends "admin_base.html" %}
+{% block active5 %}class="active"{% end %}
+{% block maincontent %}
+<h2 class="sub-header">Slide Option</h2>
+<form role="form" method="POST" action="/admin/slide" enctype="multipart/form-data">
+  <div class="form-group">
+    <label for="exampleInputEmail1">Title</label>
+    <input type="input" class="form-control" id="exampleInputEmail1" placeholder="Enter title" name="ititle">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Abstract</label>
+    <textarea rows="16" class="form-control" id="exampleInputPassword1" placeholder="Enter abstract" name="iabstract"></textarea>
+  </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">URL</label>
+    <input type="input" class="form-control" id="exampleInputEmail1" placeholder="Enter URL" name="iurl">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">ButtonView</label>
+    <input type="input" class="form-control" id="exampleInputEmail1" placeholder="Enter ButtonView" name="ibtnview">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputFile">Picture</label>
+    <input type="file" name="file" id="exampleInputFile">
+    <p class="help-block">PS:16:5图片最佳</p>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% end %}

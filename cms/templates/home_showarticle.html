@@ -1,0 +1,11 @@
+{% extends "home_listbase.html" %}
+{% block active3 %}class="active"{% end %}
+    {% block submaincontent %}
+    <div class="blog-post">
+      <h2 class="blog-post-title"><a href="/articles/a/{{ article.id }}">{{ article.title }}</a></h2>
+      <img src="{{ article.useravatar }}" alt="..." class="img-circle list-margin-fixed" style="height:38px;width:38px;">&nbsp;&nbsp;<a href="{{ article.userlink }}">{{ article.user }}</a>&nbsp;&nbsp;&nbsp;&nbsp;Type:<a href="{{ article.typelink }}">{{ article.type }}</a>
+      <p class="blog-post-meta">Create time:{{ article.pubtime }}&nbsp;&nbsp;&nbsp;&nbsp;Change time:{{ article.chgtime }}</p>
+      <P> {{ article.content }}</p>
+    </div><!-- /.blog-post -->
+    {% end %}
+    <!-- /END THE FEATURETTES -->

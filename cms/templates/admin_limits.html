@@ -1,0 +1,49 @@
+{% extends "admin_base.html" %}
+{% block customJSLink %}
+<script src="/static/js/angular.js"></script>
+<script src="/static/js/app.js"></script>
+<script>
+$(document).ready(function(){
+  $("#check").click(function(){
+    $.post("/admin/changechecked",
+    {
+      uchecked:false,
+      uid:1
+    },
+    function(data, status){
+      alert("Data:"+ data + "\nStatus:" + status);
+    });
+  });
+});
+</script>
+{% end %}
+{% block active3 %}class="active"{% end %}
+{% block maincontent %}
+<h2 class="sub-header" id="nav-user">Limits Manage</h2>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Username</th>
+        <th>Checked</th>
+        <th>Level</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in userlist %}
+      <tr>
+        <td>{{ user.uid }}</td>
+        <td>{{ user.username }}</td>
+        <td><button id="check" type="button" class="btn btn-default btn-xs">{{ user.ucheck }}</button></td>
+        <td><div class="btn-group btn-group-xs" role="group" aria-label="Small button group">
+          {% for limit in limitlist %}
+          <button type="button" class="btn btn-default">{{ limit.lname }}</button>
+          {% end %}
+      </div></td>
+      </tr>
+      {% end %}
+    </tbody>
+  </table>
+</div>
+{% end %}

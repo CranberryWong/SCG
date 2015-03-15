@@ -1,0 +1,51 @@
+{% extends "home_base.html" %}
+{% block customCssLink %}<link href="/static/css/animate.css" rel="stylesheet">{% end %}
+{% block active4 %}class="active"{% end %}
+{% block maincontent %}
+<div class="margintopfixed">
+<div class="container">
+<div class="row">
+
+  <div class="col-lg-3">
+    <form action="/members?degree=" method="GET" class="form-inline">
+          <select class="form-control" name="degree">
+            {% for one in mtype %}
+            <option {% if one == degree %}selected="selected"{% end %}>{{ one }}</option>
+            {% end %}
+          </select>
+          <button type="submit" class="btn btn-default">Filter</button>
+        </form>
+      </div>
+
+
+</div>
+<hr>
+  <div class="row">
+    {% for member in memberlist %}
+    <div class="col-lg-3 animated fadeInRight">
+      <div class="memberfeed">
+        <div class="mpartimg">
+          <img src="{{ member.uavatar }}" alt="..." class="img-circle">
+        </div>
+        <div class="mparttitle">
+          <h3><a href="/members/m/{{ member.uid }}">{{ member.username }}</a></h3>
+          <p><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;{{ member.ugrade }}</p>
+          <p><span class="glyphicon glyphicon-tags" aria-hidden="true"></span>&nbsp;&nbsp;{{ member.udomain }}</p>
+          <p><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;&nbsp;{{ member.uemail }}</p>
+
+        </div>
+        <div style="clear:both;"></div>
+        <hr>
+
+        <div class="mpartbio">
+          <p><strong>Bio:</strong>&nbsp;{{ member.ubio }}</p>
+
+        </div>
+        <div style="clear:both;"></div>
+      </div>
+    </div><!-- /.col-lg-3 -->
+    {% end %}
+  </div><!-- /.row -->
+</div>
+</div>
+{% end %}

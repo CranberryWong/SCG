@@ -1,0 +1,119 @@
+{% extends "admin_base.html" %}
+{% block active1 %}class="active"{% end %}
+{% block subnav %}
+<ul class="nav nav-sidebar">
+  <li><a href="#nav-user">User</a></li>
+  <li><a href="#nav-article">Article</a></li>
+  <li><a href="#nav-page">Page</a></li>
+  <li><a href="#nav-type">Type</a></li>
+</ul>
+{% end %}
+{% block graghic %}
+<h1 class="page-header">Admin</h1>
+
+<div class="row placeholders">
+  {% for user in userlist %}
+  {% if user.luid == 3 or user.luid == 2 %}
+  <div class="col-xs-6 col-sm-3 placeholder">
+    <img src="{{ user.uavatar }}" class="img-responsive" alt="Generic placeholder thumbnail" style="height:150px;width:150px;">
+    <h4>{{ user.username }}</h4>
+    <span class="text-muted">{{ user.ucollege }}</span>
+  </div>
+  {% end %}
+  {% end %}
+</div>
+{% end %}
+{% block maincontent %}
+<h2 class="sub-header" id="nav-user">Users</h2>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Username</th>
+        <th>BIO</th>
+        <th>Grade</th>
+        <th>Domain</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in userlist %}
+      <tr>
+        <td>{{ user.uid }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.ubio }}</td>
+        <td>{{ user.ugrade }}</td>
+        <td>{{ user.udomain }}</td>
+      </tr>
+      {% end %}
+    </tbody>
+  </table>
+</div>
+<h2 class="sub-header" id="nav-article">All Articles</h2>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Publish Time</th>
+        <th>Change Time</th>
+        <th>Editor</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for article in articlelist %}
+      <tr>
+        <td>{{ article.aid }}</td>
+        <td>{{ article.atitle }}</td>
+        <td>{{ article.apubtime }}</td>
+        <td>{{ article.achgtime }}</td>
+        <td>{{ article.auser.username }}</td>
+      </tr>
+      {% end %}
+    </tbody>
+  </table>
+</div>
+<h2 class="sub-header" id="nav-page">All Pages</h2>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>Publish Time</th>
+        <th>Change Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for page in pagelist %}
+      <tr>
+        <td>{{ page.pid }}</td>
+        <td>{{ page.ptitle }}</td>
+        <td>{{ page.ppubtime }}</td>
+        <td>{{ page.pchgtime }}</td>
+      </tr>
+      {% end %}
+    </tbody>
+  </table>
+</div>
+<h2 class="sub-header" id="nav-type">All Types</h2>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for type in typelist %}
+      <tr>
+        <td>{{ type.tid }}</td>
+        <td>{{ type.typename }}</td>
+      </tr>
+      {% end %}
+    </tbody>
+  </table>
+</div>
+{% end %}
