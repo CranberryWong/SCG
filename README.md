@@ -1,0 +1,2 @@
+# SCG
+Social Computing Group
