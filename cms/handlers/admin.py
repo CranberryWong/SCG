@@ -141,6 +141,13 @@ class ChangeChecked(tornado.web.RequestHandler, StaticData):
         print user.ucheck
         self.session.commit()
 
+class ChangeLimit(tornado.web.RequestHandler, StaticData):
+    def post(self):
+        uid = self.get_argument('uid')
+        luid = self.get_argument('luid')
+        user = self.session.query(User).filter(User.uid == uid).first()
+        user.luid = luid
+        self.session.commit()
 
 class ListReports(SignValidateBase, StaticData):
     @tornado.web.authenticated
