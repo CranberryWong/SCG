@@ -6,7 +6,7 @@ import os
 import tornado.web
 import markdown
 import random
-from models.entity import User, Article, Page, Type, Contact, Inform
+from models.entity import User, Article, Page, Type, Contact, Inform, Meetinfo, Links
 from models.entity import getSession
 from handlers.admin import SignValidateBase, nameRewrite
 
@@ -32,7 +32,7 @@ class homeBase(SignValidateBase):
 
 #用于阅读类界面的渲染
 class StaticBase(homeBase):
-    def __init__(self):
+    def init(self):
         homeBase.init(self)
         #所有类型
         self.alltype = self.session.query(Type)
@@ -47,7 +47,7 @@ class StaticBase(homeBase):
             for month in range(1, 13):
                 nums = len([article for article in articlelist if article.apubtime.year == year and article.apubtime.month ==month])
                 if nums != 0:
-                    self.articledate.insert(0, {'year':year, 'month':month, 'num':nums})
+                    self.articlebydate.insert(0, {'year':year, 'month':month, 'num':nums})
 
 class ArticleListObject(object):
     def __init__(self, article):
@@ -92,17 +92,18 @@ class Home(homeBase):
         pagelist = self.session.query(Page).order_by(Page.ppubtime)[:3]
         self.render('home_index.html', pagelist = pagelist, informlist = informlist)
 
-class ListProjects(homeBase):
+class ListProjects(StaticBase):
     def get(self, pid):
-        homeBase.init(self)
+        #homeBase.init(self)
+        StaticBase.init(self)
         self.title = 'Projects'
         pagelist = self.session.query(Page).all()
         pageList, self.pagination = generatePagination('/projects/', pagelist, pid)
         self.render('home_plist.html', list = pageList)
 
-class ShowProjects(homeBase):
+class ShowProjects(StaticBase):
     def get(self, pid):
-        homeBase.init(self)
+        StaticBase.init(self)
         page = self.session.query(Page).filter(Page.pid == pid).first()
         self.title = page.ptitle
         self.render('home_showpage.html', page = page)
@@ -119,9 +120,9 @@ class ListMembers(homeBase):
             memberlist = self.session.query(User).filter(User.ugrade == degree).all()
         self.render('home_members.html', memberlist = memberlist, mtype = mtype, degree = degree)
 
-class ListArticles(homeBase):
+class ListArticles(StaticBase):
     def get(self, aid):
-        homeBase.init(self)
+        StaticBase.init(self)
         self.title = 'Articles'
         articlelist = []
         for one in self.session.query(Article).order_by(Article.apubtime).all():
@@ -129,9 +130,9 @@ class ListArticles(homeBase):
         alist, self.pagination = generatePagination('/articles/', articlelist, aid)
         self.render('home_alist.html', list = alist)
 
-class ShowArticles(homeBase):
+class ShowArticles(StaticBase):
     def get(self, id):
-        homeBase.init(self)
+        StaticBase.init(self)
         one = self.session.query(Article).filter(Article.aid == id).first()
         self.title = one.atitle
         article = ArticleListObject(one)
@@ -175,8 +176,11 @@ class ShowMyPage(homeBase):
     def get(self, uid):
         homeBase.init(self)
         user = self.session.query(User).filter(User.uid == uid).first()
+        articlelist = []
+        for article in user.article:
+            articlelist.insert(0, ArticleListObject(article))
         self.title = user.username
-        self.render('home_page.html', user = user)
+        self.render('home_page.html', user = user, articlelist = articlelist)
 
 class EditArticle(homeBase):
     @tornado.web.authenticated

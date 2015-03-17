@@ -6,6 +6,9 @@
   <img class="home-page-img featurette-image img-responsive img-circle" src="{{ user.uavatar }}" alt="Generic placeholder image" style="margin:0 auto;border:4px solid white;">
   <h2 style="color:white;">{{ user.username }}</h2>
   <h4 style="color:white;">{{ user.ucollege }}</h4>
+  {% if handler.signeduser == user.username %}
+  <a href="/members/m/{{ user.uid }}/write"><button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>&nbsp;&nbsp;Add article</button></a>&nbsp;&nbsp;<a href="/members/m/{{ user.uid }}/profile"><button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;&nbsp;Edit profile</button></a>
+  {% end %}
 </div>
 </div>
 </div>
@@ -16,24 +19,21 @@
 <div class="row featurette" style="margin-top:20px;">
   <div class="col-md-3">
     <div class="memberfeed">
-    <h2 class="featurette-heading-fixed">BIO</h2>
+    <h2>BIO</h2>
     <p>{{ user.ubio }}</p>
   </div>
   </div>
   <div class="col-md-9">
-    {% if handler.signeduser == user.username %}
-    <div class="memberfeed">
-    <a href="/members/m/{{ user.uid }}/write"><button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>&nbsp;&nbsp;Add article</button></a>&nbsp;&nbsp;<a href="/members/m/{{ user.uid }}/profile"><button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;&nbsp;Edit profile</button></a>
-  </div>
-    {% end %}
-    {% for article in user.article %}
-    <div class="memberfeed">
-    <h2 class="featurette-heading-fixed"><a href="#">{{ article.atitle}}</a></h2>
-    <div>
-      <h5><span class="text-muted list-margin-fixed">Type:{{ article.atype.typename }}</span><span class="pull-right list-margin-fixed text-muted">create time:{{ article.apubtime }}</span><span class="pull-right list-margin-fixed text-muted"> change time:{{ article.achgtime }}</span></h5>
-    </div>
-    <p class="lead">{{ article.acontent[:300] }}<a href="#">Show all...</a></p>
-  </div>
+
+    {% for article in articlelist %}
+  <div class="memberfeed">
+  <div class="blog-post">
+    <h2 class="blog-post-title"><a href="/articles/a/{{ article.id }}">{{ article.title }}</a></h2>
+    Type:<a href="{{ article.typelink }}">{{ article.type }}</a>
+    <p class="blog-post-meta">Create time:{{ article.pubtime }}&nbsp;&nbsp;&nbsp;&nbsp;Change time:{{ article.chgtime }}</p>
+    <P> {{ article.subcontent }}<a href="/articles/a/{{ article.id }}">Show all...</a></p>
+  </div><!-- /.blog-post -->
+</div>
     {% end %}
 
   </div>

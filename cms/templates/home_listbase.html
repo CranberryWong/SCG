@@ -15,32 +15,27 @@
         <div class="sidebar-module sidebar-module-inset">
           <h4><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>&nbsp;&nbsp;Meeting Info</h4>
           <div class="well">
-          <p>here is a not good news</p>-->
+            <p><strong>{{ handler.meetinfo.mtitle }}</strong></p>
+            <p>{{ handler.meetinfo.mcontent }}</p>
+            <p>{{ handler.meetinfo.mcettime }}</p>
         </div>
         </div>
         <div class="sidebar-module">
           <h4><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span>&nbsp;&nbsp;Archives</h4>
           <ol class="list-unstyled">
-            <li><a href="#">March 2014</a></li>
-            <li><a href="#">February 2014</a></li>
-            <li><a href="#">January 2014</a></li>
-            <li><a href="#">December 2013</a></li>
-            <li><a href="#">November 2013</a></li>
-            <li><a href="#">October 2013</a></li>
-            <li><a href="#">September 2013</a></li>
-            <li><a href="#">August 2013</a></li>
-            <li><a href="#">July 2013</a></li>
-            <li><a href="#">June 2013</a></li>
-            <li><a href="#">May 2013</a></li>
-            <li><a href="#">April 2013</a></li>
+            {% for art in handler.articlebydate%}
+            <li><i class="icon-hand-right"></i>&nbsp;&nbsp;&nbsp;<a href="/q/date/{{ art['year']}}/{{ art['month'] }}">{{ art['year'] }}年{{ art['month'] }}月（{{ art['num'] }}篇）</a></li>
+            {% end %}
           </ol>
         </div>
         <div class="sidebar-module">
           <h4><span class="glyphicon glyphicon-link" aria-hidden="true"></span>&nbsp;&nbsp;Friendly Link</h4>
           <ol class="list-unstyled">
 
-            <li><a href="#">Github</a></li>
 
+            {% for link in handler.links %}
+            <li><a href="{{ link.lkurl }}" alt="{{ link.lkdescirbe }}">{{ link.lkname }}</a></li>
+            {% end %}
           </ol>
         </div>
       </div><!-- /.blog-sidebar -->
