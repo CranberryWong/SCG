@@ -1,6 +1,12 @@
 {% extends "home_base.html" %}
+{% block ngapp %}
+ng-app="myapp"
+{% end %}
 {% block customCSSLink %}
 <link href="/static/css/blog.css" rel="stylesheet">
+{% end %}
+{% block customJSLink %}
+<script src="/static/js/angular.js"></script>
 {% end %}
     {% block maincontent %}
     <div class="margintopfixed">

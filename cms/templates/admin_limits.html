@@ -7,11 +7,23 @@ $(document).ready(function(){
   $("#check").click(function(){
     $.post("/admin/changechecked",
     {
-      uchecked:false,
-      uid:1
+      uchecked:$(this).text(),
+      uid:$(this).attr("value")
     },
     function(data, status){
-      alert("Data:"+ data + "\nStatus:" + status);
+      console.log("Data:"+ data + "\nStatus:" + status);
+    });
+  });
+});
+$(document).ready(function(){
+  $("#limit").click(function(){
+    $.post("/admin/changelimit",
+    {
+      uchecked:$(this).text(),
+      uid:$(this).attr("value")
+    },
+    function(data, status){
+      console.log("Data:"+ data + "\nStatus:" + status);
     });
   });
 });
@@ -35,10 +47,10 @@ $(document).ready(function(){
       <tr>
         <td>{{ user.uid }}</td>
         <td>{{ user.username }}</td>
-        <td><button id="check" type="button" class="btn btn-default btn-xs">{{ user.ucheck }}</button></td>
-        <td><div class="btn-group btn-group-xs" role="group" aria-label="Small button group">
+        <td><button id="check" type="button" class="btn btn-default btn-xs" value="{{ user.uid }}">{{ user.ucheck }}</button></td>
+        <td><div class="btn-group btn-group-xs" role="group" aria-label="Small button group" id=>
           {% for limit in limitlist %}
-          <button type="button" class="btn btn-default">{{ limit.lname }}</button>
+          <button id="limits" type="button" class="btn btn-default">{{ limit.lname }}</button>
           {% end %}
       </div></td>
       </tr>
