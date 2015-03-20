@@ -195,8 +195,8 @@ class LinkOption(SignValidateBase, StaticData):
         self.title = 'Link Option'
         lkname = self.get_argument('lkname', default='')
         lkurl = self.get_argument('lkurl', default='')
-        lkdescribe = self.get_argument('lkdescribe', describe='')
-        link = Link(lkname, lkurl)
+        lkdescribe = self.get_argument('lkdescribe', default='')
+        link = Links(lkname, lkurl)
         link.lkdescribe = lkdescribe
         self.session.add(link)
         self.session.commit()

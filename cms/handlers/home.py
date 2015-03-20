@@ -36,7 +36,7 @@ class StaticBase(homeBase):
         homeBase.init(self)
         #所有类型
         self.alltype = self.session.query(Type)
-        self.meetinfo = self.session.query(Meetinfo).first()
+        self.meetinfo = self.session.query(Meetinfo).order_by(Meetinfo.mcettime.desc()).first()
         self.links = self.session.query(Links).all()
         #归档
         articlelist = self.session.query(Article).order_by(Article.apubtime.desc()).all()
@@ -154,11 +154,11 @@ class ShowContact(homeBase):
 
     def post(self):
         homeBase.init(self)
-        cname = self.get_argument('name', default='')
-        ccollege = self.get_argument('college', default='')
-        cemail = self.get_argument('email', default='')
+        cname = self.get_argument('cname', default='')
+        ccollege = self.get_argument('ccollege', default='')
+        ccemail = self.get_argument('ccemail', default='')
         creason = self.get_argument('creason', default='')
-        contact = Contact(cname, ccollege, cemail, creason)
+        contact = Contact(cname, ccollege, ccemail, creason)
         if 'file' in self.request.files:
             file_dict_list = self.request.files['file']
             for file_dict in file_dict_list:

@@ -110,10 +110,10 @@ class Contact(Base):
     creason = Column(Text)
     cresume = Column(String(100))
 
-    def __init__(self, cname, ccollege, cemail, creason):
+    def __init__(self, cname, ccollege, ccemail, creason):
         self.cname = cname
         self.ccollege = ccollege
-        self.cemail = cemail
+        self.ccemail = ccemail
         self.creason = creason
         self.cresume = ''
 
