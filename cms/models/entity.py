@@ -36,7 +36,7 @@ class User(Base):
       self.ugrade = ''
       self.udomain = ''
       self.uavatar = ''
-      self.ulevel = 1
+      self.luid = 1
 
    def __repr__(self):
       return "<User('%s')>" % (self.username)
@@ -205,7 +205,7 @@ class Meetinfo(Base):
 
     def __repr__(self):
         return "<MeetingInfo('%s')>" % (self.mtitle)
-        
+
 def getDBURL():
    return 'postgresql+psycopg2://%s:%s@%s:%d/%s' % (DBSETTINGS['db_user'], DBSETTINGS['db_password'], DBSETTINGS['db_host'], DBSETTINGS['db_port'], DBSETTINGS['db_name'])
 

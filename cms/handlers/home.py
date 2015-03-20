@@ -223,6 +223,7 @@ class EditProfile(homeBase):
         user.ugrade = ugrade
         user.udomain = udomain
         user.ubio = ubio
+        print ubio, ugrade, ucollege
         if 'file' in self.request.files:
             file_dict_list = self.request.files['file']
             for file_dict in file_dict_list:
