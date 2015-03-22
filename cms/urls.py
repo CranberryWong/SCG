@@ -1,7 +1,18 @@
 #! /usr/bin/env python
 #coding=utf-8
 
+import os
+import tornado.web
 from handlers import admin, home, upload, exception, mail
+
+SETTINGS = dict(
+   debug = True,
+   template_path = os.path.join(os.path.dirname(__file__),"templates"),
+   static_path = os.path.join(os.path.dirname(__file__),"static"),
+   cookie_secret = "dEr2Viz6TrqsoQVbQCRdxUmzKB5q40U0jYtp+fnsAOY=",
+   login_url = "/signin",
+   autoescape = None,
+)
 
 homeurls = [
 
@@ -38,7 +49,9 @@ homeurls = [
    (r"/admin/mail",mail.MailSending),
 
 
+   #cache
+   (r"/(favicon\.ico)", tornado.web.StaticFileHandler, dict(path=SETTINGS['static_path'])),
 
-
+   #exception
    (r".*", exception.ErrorHandler)
 ]
