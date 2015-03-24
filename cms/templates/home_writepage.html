@@ -1,7 +1,6 @@
-{% extends "home_base.html" %}
-{% block maincontent %}
-<div class="margintopfixed">
-<h2 class="featurette-heading abouttitlefixed">Write New Common Article</h2>
+{% extends "home_page.html" %}
+{% block subcontent %}
+<h2>Write New Common Article</h2>
 <form role="form" method="POST" action="/members/m/{{ uid }}/write">
   <div class="form-group">
     <label for="exampleInputEmail1">Title</label>
@@ -22,5 +21,4 @@
   <button type="submit" class="btn btn-primary">Submit</button>
   <button type="reset" class="btn btn-default">Reset</button>
 </form>
-</div>
 {% end %}

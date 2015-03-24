@@ -13,7 +13,7 @@ class ErrorHandler(homeBase):
         self.title = str(status_code)
         if status_code == 404:
             self.render('404.html')
-        #elif status_code == 500:
-            #self.render('500.html')
+        elif status_code == 500:
+            self.render('500.html')
         else:
             self.write('error:' + str(status_code))

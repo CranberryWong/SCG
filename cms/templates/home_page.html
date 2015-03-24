@@ -19,22 +19,13 @@
 <div class="row featurette" style="margin-top:20px;">
   <div class="col-md-3">
     <div class="memberfeed">
-    <h2>BIO</h2>
+    <h3>BIO</h3>
     <p>{{ user.ubio }}</p>
   </div>
   </div>
   <div class="col-md-9">
-
-    {% for article in articlelist %}
-  <div class="memberfeed">
-  <div class="blog-post">
-    <h2 class="blog-post-title"><a href="/articles/a/{{ article.id }}">{{ article.title }}</a></h2>
-    Type:<a href="{{ article.typelink }}">{{ article.type }}</a>
-    <p class="blog-post-meta">Create time:{{ article.pubtime }}&nbsp;&nbsp;&nbsp;&nbsp;Change time:{{ article.chgtime }}</p>
-    <P> {{ article.subcontent }}<a href="/articles/a/{{ article.id }}">Show all...</a></p>
-  </div><!-- /.blog-post -->
-</div>
-    {% end %}
+{% block subcontent %}
+{% end %}
 
   </div>
 

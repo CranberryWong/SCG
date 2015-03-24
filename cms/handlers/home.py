@@ -167,7 +167,7 @@ class ShowContact(homeBase):
                 with open(resume_path + filename, 'w') as f:
                     f.write(data)
                     print filename
-            contact.cresume = resume_path + filename
+            contact.cresume = '/static/resume/' + filename
         self.session.add(contact)
         self.session.commit()
         self.write('<script language="javascript">alert("提交成功");self.location="/";</script>')
@@ -180,16 +180,17 @@ class ShowMyPage(homeBase):
         for article in user.article:
             articlelist.insert(0, ArticleListObject(article))
         self.title = user.username
-        self.render('home_page.html', user = user, articlelist = articlelist)
+        self.render('home_pagehome.html', user = user, articlelist = articlelist)
 
 class EditArticle(homeBase):
     @tornado.web.authenticated
     def get(self, uid):
         homeBase.init(self)
+        user = self.session.query(User).filter(User.uid == uid).first()
         print uid
         self.title = 'Edit Article'
         typelist = self.session.query(Type).all()
-        self.render('home_writepage.html', typelist = typelist, uid = uid)
+        self.render('home_writepage.html', typelist = typelist, uid = uid, user = user)
 
     def post(self, uid):
         homeBase.init(self)
@@ -207,8 +208,9 @@ class EditProfile(homeBase):
     @tornado.web.authenticated
     def get(self, id):
         homeBase.init(self)
+        user = self.session.query(User).filter(User.uid == id).first()
         self.title = 'Edit Profile'
-        self.render('home_profile.html', id = id)
+        self.render('home_profile.html', id = id, user = user)
 
     @tornado.web.authenticated
     def post(self, id):
