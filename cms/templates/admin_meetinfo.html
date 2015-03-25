@@ -1,7 +1,29 @@
 {% extends "admin_base.html" %}
 {% block active7 %}class="active"{% end %}
 {% block maincontent %}
-<h2 class="sub-header">MeetingInfo Option</h2>
+<h2 class="sub-header" id="nav-article">All Links</h2>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Meet Id</th>
+        <th>Title</th>
+        <th>Create Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for meetinfo in meetinfos %}
+      <tr>
+        <td>{{ meetinfo.mid }}</td>
+        <td>{{ meetinfo.mtitle }}</td>
+        <td>{{ meetinfo.mcettime }}</td>
+      </tr>
+      {% end %}
+    </tbody>
+  </table>
+</div>
+<hr>
+<h2 class="sub-header">Add MeetingInfo</h2>
 <form role="form" method="POST" action="/admin/meetinfo" enctype="multipart/form-data">
   <div class="form-group">
     <label for="exampleInputEmail1">Title</label>

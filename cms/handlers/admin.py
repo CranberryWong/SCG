@@ -6,6 +6,7 @@ import time
 import os
 from models.entity import User, Article, Type, Page, Contact, Upload, Inform, Limits, Links, Meetinfo
 from models.entity import getSession
+from handlers.generateObject import ArticleListObject, PageListObject
 import hashlib
 import json
 
@@ -86,9 +87,15 @@ class AdminHome(SignValidateBase, StaticData):
     def get(self):
         StaticData.__init__(self)
         self.title = 'Dashboard'
+        articlelist = []
+        pagelist = []
         userlist = self.session.query(User).all()
-        articlelist = self.session.query(Article).all()
-        pagelist = self.session.query(Page).all()
+        aarticlelist = self.session.query(Article).all()
+        for one in aarticlelist:
+            articlelist.insert(0, ArticleListObject(one))
+        ppagelist = self.session.query(Page).all()
+        for one in ppagelist:
+            pagelist.insert(0, PageListObject(one))
         typelist = self.session.query(Type).all()
         self.render('admin_overview.html', userlist = userlist, articlelist = articlelist, pagelist = pagelist, typelist = typelist)
 
@@ -161,7 +168,8 @@ class SlideOption(SignValidateBase, StaticData):
     @tornado.web.authenticated
     def get(self):
         self.title = 'Slide Option'
-        self.render("admin_slide.html")
+        informs = self.session.query(Inform).all()
+        self.render("admin_slide.html", informs = informs)
 
     def post(self):
         self.title = 'Slide Option'
@@ -189,7 +197,8 @@ class LinkOption(SignValidateBase, StaticData):
     @tornado.web.authenticated
     def get(self):
         self.title = 'Link Option'
-        self.render('admin_link.html')
+        links = self.session.query(Links).all()
+        self.render('admin_link.html', links = links)
 
     def post(self):
         self.title = 'Link Option'
@@ -200,13 +209,14 @@ class LinkOption(SignValidateBase, StaticData):
         link.lkdescribe = lkdescribe
         self.session.add(link)
         self.session.commit()
-        self.write('<script language="javascript">alert("提交成功");self.location="/admin";</script>')
+        self.write('<script language="javascript">alert("提交成功");self.location="/admin/link";</script>')
 
 class MeetinfoOption(SignValidateBase, StaticData):
     @tornado.web.authenticated
     def get(self):
         self.title = 'Meetinfo Option'
-        self.render('admin_meetinfo.html')
+        meetinfos = self.session.query(Meetinfo).all()
+        self.render('admin_meetinfo.html', meetinfos = meetinfos)
 
     def post(self):
         self.title = 'Meetinfo Option'

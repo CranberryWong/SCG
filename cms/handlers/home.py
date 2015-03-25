@@ -9,6 +9,7 @@ import random
 from models.entity import User, Article, Page, Type, Contact, Inform, Meetinfo, Links
 from models.entity import getSession
 from handlers.admin import SignValidateBase, nameRewrite
+from handlers.generateObject import ArticleListObject, PageListObject
 
 #页面通用数据
 avatar_path = os.path.join(os.path.abspath('.'), 'static/avatar/')
@@ -49,20 +50,6 @@ class StaticBase(homeBase):
                 if nums != 0:
                     self.articlebydate.insert(0, {'year':year, 'month':month, 'num':nums})
 
-class ArticleListObject(object):
-    def __init__(self, article):
-        self.id = article.aid
-        self.title = article.atitle
-        self.subcontent = article.acontent[:300]
-        self.content = article.acontent
-        self.type = article.atype.typename
-        self.typelink = ''
-        self.pubtime = article.apubtime
-        self.chgtime = article.achgtime
-        self.user = article.auser.username
-        self.useravatar = article.auser.uavatar
-        self.userlink = '/members/m/' + str(article.auser.uid)
-
 class Pagination(object):
     def __init__(self):
         self.pre = ''
@@ -97,14 +84,17 @@ class ListProjects(StaticBase):
         #homeBase.init(self)
         StaticBase.init(self)
         self.title = 'Projects'
-        pagelist = self.session.query(Page).all()
+        pagelist = []
+        for one in self.session.query(Page).all():
+            pagelist.insert(0, PageListObject(one))
         pageList, self.pagination = generatePagination('/projects/', pagelist, pid)
         self.render('home_plist.html', list = pageList)
 
 class ShowProjects(StaticBase):
     def get(self, pid):
         StaticBase.init(self)
-        page = self.session.query(Page).filter(Page.pid == pid).first()
+        ppage = self.session.query(Page).filter(Page.pid == pid).first()
+        page = PageListObject(ppage)
         self.title = page.ptitle
         self.render('home_showpage.html', page = page)
 
@@ -201,7 +191,7 @@ class EditArticle(homeBase):
         article = Article(atitle, acontent, uid, taid)
         self.session.add(article)
         self.session.commit()
-        self.write('<script language="javascript">alert("提交成功");self.location="/members/m/%s"</script>') % str(uid)
+        self.write('<script language="javascript">alert("提交成功");self.location="/members/m/\%s"</script>') % str(uid)
 
 
 class EditProfile(homeBase):
@@ -236,6 +226,7 @@ class EditProfile(homeBase):
                     print filename
             user.uavatar = '/static/avatar/' + filename
         else:
-            user.uavatar = '/static/images/' + 'avatar-'+ str(random.randint(1,16)) +'.svg'
+            if user.uavatar == None:
+                user.uavatar = '/static/images/' + 'avatar-'+ str(random.randint(1,16)) +'.svg'
         self.session.commit()
         self.write('<script language="javascript">alert("OK,Entering your own homepage!!");self.location="/";</script>')

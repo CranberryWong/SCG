@@ -1,7 +1,29 @@
 {% extends "admin_base.html" %}
 {% block active6 %}class="active"{% end %}
 {% block maincontent %}
-<h2 class="sub-header">Link Option</h2>
+<h2 class="sub-header" id="nav-article">All Links</h2>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Link id</th>
+        <th>Link Name</th>
+        <th>Link Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for link in links %}
+      <tr>
+        <td>{{ link.lkid }}</td>
+        <td>{{ link.lkname }}</td>
+        <td>{{ link.lkdescribe[:20] }}</td>
+      </tr>
+      {% end %}
+    </tbody>
+  </table>
+</div>
+<hr>
+<h2 class="sub-header">Add Link</h2>
 <form role="form" method="POST" action="/admin/link" enctype="multipart/form-data">
   <div class="form-group">
     <label for="exampleInputEmail1">Name</label>

@@ -64,11 +64,11 @@
     <tbody>
       {% for article in articlelist %}
       <tr>
-        <td>{{ article.aid }}</td>
-        <td>{{ article.atitle }}</td>
-        <td>{{ article.apubtime }}</td>
-        <td>{{ article.achgtime }}</td>
-        <td>{{ article.auser.username }}</td>
+        <td>{{ article.id }}</td>
+        <td>{{ article.title }}</td>
+        <td>{{ article.pubtime }}</td>
+        <td>{{ article.chgtime }}</td>
+        <td>{{ article.user }}</td>
       </tr>
       {% end %}
     </tbody>

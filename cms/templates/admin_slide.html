@@ -1,7 +1,29 @@
 {% extends "admin_base.html" %}
 {% block active5 %}class="active"{% end %}
 {% block maincontent %}
-<h2 class="sub-header">Slide Option</h2>
+<h2 class="sub-header" id="nav-article">All Links</h2>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Inform Id</th>
+        <th>Title</th>
+        <th>Create Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for inform in informs %}
+      <tr>
+        <td>{{ inform.iid }}</td>
+        <td>{{ inform.ititle }}</td>
+        <td>{{ inform.icettime }}</td>
+      </tr>
+      {% end %}
+    </tbody>
+  </table>
+</div>
+<hr>
+<h2 class="sub-header">Add Slide</h2>
 <form role="form" method="POST" action="/admin/slide" enctype="multipart/form-data">
   <div class="form-group">
     <label for="exampleInputEmail1">Title</label>
