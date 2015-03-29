@@ -1,19 +1,20 @@
 {% extends "home_page.html" %}
 {% block subcontent %}
-<h2>Write New Common Article</h2>
+<h2>Write New Article</h2>
 <form role="form" method="POST" action="/members/m/{{ uid }}/write">
+  <input type="hidden" class="form-control" id="exampleInputEmail1" name="aid" value="{{ article.aid }}">
   <div class="form-group">
     <label for="exampleInputEmail1">Title</label>
-    <input type="input" class="form-control" id="exampleInputEmail1" placeholder="Enter title" name="atitle">
+    <input type="input" class="form-control" id="exampleInputEmail1" placeholder="Enter title" name="atitle" value="{{ article.atitle }}">
   </div>
   <div class="form-group">
     <label for="exampleInputPassword1">Content</label>
-    <textarea rows="16" class="form-control" id="exampleInputPassword1" placeholder="Enter content with markdown" name="acontent"></textarea>
+    <textarea rows="16" class="form-control" id="exampleInputPassword1" placeholder="Enter content with markdown" name="acontent">{{ article.acontent }}</textarea>
   </div>
     {% for type in typelist %}
     <div class="radio">
       <label>
-        <input type="radio" name="optionsRadios" id="optionsRadios" value="{{ type.tid }}">
+        <input type="radio" name="optionsRadios" id="optionsRadios" value="{{ type.tid }}" {% if article.taid == type.tid %} checked{% end %}>
         {{ type.typename }}
       </label>
     </div>

@@ -9,6 +9,7 @@
         <th>Meet Id</th>
         <th>Title</th>
         <th>Create Time</th>
+        <th>Option</th>
       </tr>
     </thead>
     <tbody>
@@ -17,6 +18,7 @@
         <td>{{ meetinfo.mid }}</td>
         <td>{{ meetinfo.mtitle }}</td>
         <td>{{ meetinfo.mcettime }}</td>
+        <td><div><span><a href="/admin/meetinfo?mid={{ meetinfo.mid }}">Edit</a></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span><a href="/admin/delmeetinfo?mid={{ meetinfo.mid }}">Delete</a></span></div></td>
       </tr>
       {% end %}
     </tbody>
@@ -25,6 +27,7 @@
 <hr>
 <h2 class="sub-header">Add MeetingInfo</h2>
 <form role="form" method="POST" action="/admin/meetinfo" enctype="multipart/form-data">
+  <input type="hidden" name="mid" value="{{ meetinfoobj.mid }}">
   <div class="form-group">
     <label for="exampleInputEmail1">Title</label>
     <input type="input" class="form-control" id="exampleInputEmail1" placeholder="Enter Title" name="mtitle">

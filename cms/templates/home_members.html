@@ -28,13 +28,13 @@
           <img src="{{ member.uavatar }}" alt="..." class="img-circle">
         </div>
         <div class="mparttitle">
-          <h3><a href="/members/m/{{ member.uid }}">{{ member.username }}</a></h3>
-          <p><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;{{ member.ugrade }}</p>
-          <p><span class="glyphicon glyphicon-tags" aria-hidden="true"></span>&nbsp;&nbsp;{{ member.udomain }}</p>
-          <p><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;&nbsp;{{ member.uemail }}</p>
-
+          <h3><p><a href="/members/m/{{ member.uid }}">{{ member.username }}</a></p></h3>
         </div>
-        <div style="clear:both;"></div>
+        <div style="clear:both;margin-bottom:20px;"></div>
+        <p><span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp;&nbsp;{{ member.ugrade }}</p>
+        <p><span class="glyphicon glyphicon-tags" aria-hidden="true"></span>&nbsp;&nbsp;{{ member.udomain }}</p>
+        <p><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;&nbsp;{{ member.uemail }}</p>
+
         <hr>
 
         <div class="mpartbio">

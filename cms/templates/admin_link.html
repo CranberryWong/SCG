@@ -9,6 +9,7 @@
         <th>Link id</th>
         <th>Link Name</th>
         <th>Link Description</th>
+        <th>Option</th>
       </tr>
     </thead>
     <tbody>
@@ -17,6 +18,7 @@
         <td>{{ link.lkid }}</td>
         <td>{{ link.lkname }}</td>
         <td>{{ link.lkdescribe[:20] }}</td>
+        <td><div><span><a href="/admin/link?lkid={{ link.lkid }}">Edit</a></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span><a href="/admin/dellink?lkid={{ link.lkid }}">Delete</a></span></div></td>
       </tr>
       {% end %}
     </tbody>
@@ -25,17 +27,18 @@
 <hr>
 <h2 class="sub-header">Add Link</h2>
 <form role="form" method="POST" action="/admin/link" enctype="multipart/form-data">
+  <input type="hidden" name="lkid" value="{{ linkobj.lkid }}">
   <div class="form-group">
     <label for="exampleInputEmail1">Name</label>
-    <input type="input" class="form-control" id="exampleInputEmail1" placeholder="Enter Name" name="lkname">
+    <input type="input" class="form-control" id="exampleInputEmail1" placeholder="Enter Name" name="lkname" value="{{ linkobj.lkname }}">
   </div>
   <div class="form-group">
     <label for="exampleInputEmail1">URL</label>
-    <input type="input" class="form-control" id="exampleInputEmail1" placeholder="Enter URL" name="lkurl">
+    <input type="input" class="form-control" id="exampleInputEmail1" placeholder="Enter URL" name="lkurl" value="{{ linkobj.lkurl }}">
   </div>
   <div class="form-group">
     <label for="exampleInputPassword1">Description</label>
-    <textarea rows="16" class="form-control" id="exampleInputPassword1" placeholder="Enter Description" name="lkdescribe"></textarea>
+    <textarea rows="16" class="form-control" id="exampleInputPassword1" placeholder="Enter Description" name="lkdescribe">{{ linkobj.lkdescribe }}</textarea>
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>

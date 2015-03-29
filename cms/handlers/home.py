@@ -9,8 +9,8 @@ import random
 from models.entity import User, Article, Page, Type, Contact, Inform, Meetinfo, Links
 from models.entity import getSession
 from handlers.admin import SignValidateBase, nameRewrite
-from handlers.generateObject import ArticleListObject, PageListObject
-
+from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject
+from datetime import datetime
 #页面通用数据
 avatar_path = os.path.join(os.path.abspath('.'), 'static/avatar/')
 resume_path = os.path.join(os.path.abspath('.'), 'static/resume/')
@@ -37,7 +37,7 @@ class StaticBase(homeBase):
         homeBase.init(self)
         #所有类型
         self.alltype = self.session.query(Type)
-        self.meetinfo = self.session.query(Meetinfo).order_by(Meetinfo.mcettime.desc()).first()
+        self.meetinfo = MeetinfoObject(self.session.query(Meetinfo).order_by(Meetinfo.mcettime.desc()).first())
         self.links = self.session.query(Links).all()
         #归档
         articlelist = self.session.query(Article).order_by(Article.apubtime.desc()).all()
@@ -182,11 +182,16 @@ class EditArticle(homeBase):
     @tornado.web.authenticated
     def get(self, uid):
         homeBase.init(self)
+        aid = self.get_argument('aid',default=None)
         user = self.session.query(User).filter(User.uid == uid).first()
-        print uid
         self.title = 'Edit Article'
         typelist = self.session.query(Type).all()
-        self.render('home_writepage.html', typelist = typelist, uid = uid, user = user)
+        if aid == None:
+            article = Article('','','','')
+            article.aid = None
+        else:
+            article = self.session.query(Article).filter(Article.aid == aid).first()
+        self.render('home_writepage.html', typelist = typelist, uid = uid, user = user, article = article)
 
     def post(self, uid):
         homeBase.init(self)
@@ -194,17 +199,30 @@ class EditArticle(homeBase):
         atitle = self.get_argument('atitle', default='')
         acontent = self.get_argument('acontent', default='')
         taid = self.get_argument('optionsRadios', default='')
-        article = Article(atitle, acontent, uid, taid)
-        self.session.add(article)
-        self.session.commit()
-        self.write('<script language="javascript">alert("提交成功");self.location="/members/m/%s"</script>'% str(uid)) 
+        aid = self.get_argument('aid', default='None')
+        print aid, type(aid)
+        if aid == 'None':
+            article = Article(atitle, acontent, uid, taid)
+            self.session.add(article)
+            self.session.commit()
+            self.write('<script language="javascript">alert("提交成功");self.location="/members/m/%s"</script>'% str(uid))
+        else:
+            article = self.session.query(Article).filter(Article.aid == aid).first()
+            article.atitle = atitle
+            article.acontent = acontent
+            article.taid = taid
+            article.achgtime = datetime.now()
+            self.session.commit()
+            self.write('<script language="javascript">alert("提交成功");self.location="/members/m/%s"</script>'% str(uid))
 
-    def delete(self, aid):
+class DeleteArticle(homeBase):
+    @tornado.web.authenticated
+    def get(self, uid):
+        homeBase.init(self)
+        aid = self.get_argument("aid", default=None)
         self.session.query(Article).filter(Article.aid == aid).delete()
         self.session.commit()
-        self.write('<script language="javascript">alert("删除成功");self.location="/members/m/%s"</script>'% str(uid))
-
-
+        self.redirect('/members/m/%s' % str(uid))
 
 class EditProfile(homeBase):
     @tornado.web.authenticated
@@ -242,3 +260,15 @@ class EditProfile(homeBase):
                 user.uavatar = '/static/images/' + 'avatar-'+ str(random.randint(1,16)) +'.svg'
         self.session.commit()
         self.write('<script language="javascript">alert("OK,Entering your own homepage!!");self.location="/";</script>')
+
+class ListbyDate(homeBase):
+    def get(self,year,month):
+        homeBase.init(self)
+        targetpage = int(self.get_argument('page',default='1'))
+        self.pagination = Pagination()
+        bloglist = [ArticleListObject(article) for article in self.session.query(Article).all() if article.pubtime.year == int(year) and article.pubtime.month == int(month)]
+
+        bloglist, self.pagination = generatePagination('/q/date/' + year + '/' + month + '?page=', bloglist, targetpage)
+
+        self.title = "归档：" + str(year) + "年" + str(month) + "月"
+        self.render("home_alist.html", bloglist = bloglist, thisquery = "/q/date/" + year + "/" + month )

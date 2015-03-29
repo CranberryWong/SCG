@@ -6,9 +6,10 @@ import time
 import os
 from models.entity import User, Article, Type, Page, Contact, Upload, Inform, Limits, Links, Meetinfo
 from models.entity import getSession
-from handlers.generateObject import ArticleListObject, PageListObject
+from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject
 import hashlib
 import json
+from datetime import datetime
 
 page_path = os.path.join(os.path.abspath('.'), 'static/page/')
 inform_path = os.path.join(os.path.abspath('.'), 'static/inform/')
@@ -97,32 +98,85 @@ class AdminHome(SignValidateBase, StaticData):
         for one in ppagelist:
             pagelist.insert(0, PageListObject(one))
         typelist = self.session.query(Type).all()
-        self.render('admin_overview.html', userlist = userlist, articlelist = articlelist, pagelist = pagelist, typelist = typelist)
+        tid = self.get_argument('tid', default=None)
+        if tid == None:
+            typeobj = Type('')
+            typeobj.tid = None
+        else:
+            typeobj = self.session.query(Type).filter(Type.tid == tid).first()
+        self.render('admin_overview.html', userlist = userlist, articlelist = articlelist, pagelist = pagelist, typelist = typelist, typeobj = typeobj)
+
+    def post(self):
+        tid = self.get_argument('tid', default='None')
+        typename = self.get_argument('typename', default='')
+        if tid == 'None':
+            typeobj = Type(typename)
+            self.session.add(typeobj)
+            self.session.commit()
+        else:
+            typeobj = self.session.query(Type).filter(Type.tid == tid).first()
+            typeobj.typename = typename
+            self.session.commit()
+        self.redirect('/admin')
 
 class EditPage(SignValidateBase, StaticData):
     @tornado.web.authenticated
     def get(self):
         self.title = 'Dashboard Edit'
-        self.render('admin_editpage.html', active2 = 'class="active"')
+        pid = self.get_argument('pid', default=None)
+        if pid == None:
+            page = Page('','')
+            page.pid = None
+        else:
+            page = self.session.query(Page).filter(Page.pid == pid).first()
+        self.render('admin_editpage.html', active2 = 'class="active"', page = page)
 
     def post(self):
         self.title = 'Dashboard Edit'
         StaticData.__init__(self)
+        pid = self.get_argument('pid', default=None)
+        print pid, type(pid)
         ptitle = self.get_argument('ptitle', default='')
         pcontent = self.get_argument('pcontent', default='')
-        page = Page(ptitle, pcontent)
-        if 'file' in self.request.files:
-            file_dict_list = self.request.files['file']
-            for file_dict in file_dict_list:
-                filename = nameRewrite(file_dict["filename"]).encode('utf8')
-                data = file_dict["body"]
-                with open(page_path + filename, 'w') as f:
-                    f.write(data)
-                    print filename
-            page.ppic = page_path + filename
-        self.session.add(page)
-        self.session.commit()
+        if pid == None:
+            page = Page(ptitle, pcontent)
+            if 'file' in self.request.files:
+                file_dict_list = self.request.files['file']
+                for file_dict in file_dict_list:
+                    filename = nameRewrite(file_dict["filename"]).encode('utf8')
+                    data = file_dict["body"]
+                    with open(page_path + filename, 'w') as f:
+                        f.write(data)
+                        print filename
+                        page.ppic = '/static/page/' + filename
+            self.session.add(page)
+            self.session.commit()
+        else:
+            page = self.session.query(Page).filter(Page.pid == pid).first()
+            page.ptitle = ptitle
+            page.pcontent = pcontent
+            if 'file' in self.request.files:
+                file_dict_list = self.request.files['file']
+                for file_dict in file_dict_list:
+                    filename = nameRewrite(file_dict["filename"]).encode('utf8')
+                    if page.ppic != page_path + filename[:len(filename)-10]:
+                        page.ppic = page_path + filename
+                        data = file_dict["body"]
+                        with open(page_path + filename, 'w') as f:
+                            f.write(data)
+                            print filename
+                            page.ppic = '/static/page/' + filename
+            page.pchgtime = datetime.now()
+            self.session.commit()
         self.write('<script language="javascript">alert("提交成功");self.location="/admin/editpage"</script>')
+
+class DelPage(SignValidateBase, StaticData):
+    @tornado.web.authenticated
+    def get(self):
+        pid = self.get_argument('pid', default=None)
+        self.session.query(Page).filter(Page.pid == pid).delete()
+        self.session.commit()
+        self.redirect('/admin')
 
 class EditLimits(SignValidateBase, StaticData):
     @tornado.web.authenticated
@@ -197,36 +251,91 @@ class LinkOption(SignValidateBase, StaticData):
     @tornado.web.authenticated
     def get(self):
         self.title = 'Link Option'
+        lkid = self.get_argument('lkid', default=None)
         links = self.session.query(Links).all()
-        self.render('admin_link.html', links = links)
+        if lkid == None:
+            linkobj = Links('','')
+            linkobj.lkid = None
+        else:
+            linkobj = self.session.query(Links).filter(Links.lkid == lkid).first()
+        self.render('admin_link.html', links = links, linkobj = linkobj)
 
     def post(self):
         self.title = 'Link Option'
+        lkid = self.get_argument('lkid', default='None')
         lkname = self.get_argument('lkname', default='')
         lkurl = self.get_argument('lkurl', default='')
         lkdescribe = self.get_argument('lkdescribe', default='')
-        link = Links(lkname, lkurl)
-        link.lkdescribe = lkdescribe
-        self.session.add(link)
-        self.session.commit()
+        if lkid == 'None':
+            link = Links(lkname, lkurl)
+            link.lkdescribe = lkdescribe
+            self.session.add(link)
+            self.session.commit()
+        else:
+            link = self.session.query(Links).filter(Links.lkid == lkid).first()
+            link.lkname = lkname
+            link.lkurl = lkurl
+            link.lkdescribe = lkdescribe
+            self.session.commit()
         self.write('<script language="javascript">alert("提交成功");self.location="/admin/link";</script>')
+
+class DelLink(SignValidateBase, StaticData):
+    @tornado.web.authenticated
+    def get(self):
+        lkid = self.get_argument('lkid', default=None)
+        self.session.query(Links).filter(Links.lkid == lkid).delete()
+        self.session.commit()
+        self.redirect('/admin/link')
 
 class MeetinfoOption(SignValidateBase, StaticData):
     @tornado.web.authenticated
     def get(self):
         self.title = 'Meetinfo Option'
-        meetinfos = self.session.query(Meetinfo).all()
-        self.render('admin_meetinfo.html', meetinfos = meetinfos)
+        meetinfos =[]
+        meetinfo = self.session.query(Meetinfo).all()
+        for one in meetinfo:
+            meetinfos.insert(0, MeetinfoObject(one))
+        mid = self.get_argument('mid', default=None)
+        if mid == None:
+            meetinfoobj = Meetinfo('','')
+            meetinfoobj.mid = None
+        else:
+            meetinfoobj = self.session.query(Meetinfo).filter(Meetinfo.mid == mid).first()
+        self.render('admin_meetinfo.html', meetinfos = meetinfos, meetinfoobj = meetinfoobj)
 
     def post(self):
         self.title = 'Meetinfo Option'
         mtitle = self.get_argument('mtitle', default='')
         mcontent = self.get_argument('mcontent', default='')
-        meetinfo = Meetinfo(mtitle, mcontent)
-        self.session.add(meetinfo)
-        self.session.commit()
-        self.write('<script language="javascript">alert("提交成功");self.location="/admin";</script>')
+        mid = self.get_argument('mid', default='None')
+        if mid == 'None':
+            meetinfo = Meetinfo(mtitle, mcontent)
+            self.session.add(meetinfo)
+            self.session.commit()
+            self.write('<script language="javascript">alert("提交成功");self.location="/admin/meetinfo";</script>')
+        else:
+            meetinfo = self.session.query(Meetinfo).filter(Meetinfo.mid == mid).first()
+            meetinfo.mtitle = mtitle
+            meetinfo.mcontent = mcontent
+            self.session.commit()
+            self.write('<script language="javascript">alert("提交成功");self.location="/admin/meetinfo";</script>')
 
+
+class DelMeetinfo(SignValidateBase, StaticData):
+    @tornado.web.authenticated
+    def get(self):
+        mid = self.get_argument('mid', default=None)
+        self.session.query(Meetinfo).filter(Meetinfo.mid == mid).delete()
+        self.session.commmit()
+        self.redirect('/admin/meetinfo')
+
+class DelType(SignValidateBase, StaticData):
+    @tornado.web.authenticated
+    def get(self):
+        tid = self.get_argument('tid', default=None)
+        self.session.query(Type).filter(Type.tid == tid).delete()
+        self.session.commit()
+        self.redirect('/admin')
 
 class AdminStatistic():
     pass

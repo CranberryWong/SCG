@@ -27,9 +27,11 @@ homeurls = [
    (r"/projects/p/([0-9]+)",home.ShowProjects),
    (r"/articles/a/([0-9]+)",home.ShowArticles),
    (r"/members/m/([0-9]+)",home.ShowMyPage),
+   (r'/q/date/([0-9]+)/([0-9]+)',home.ListByDate),
    #(r"/type/([0-9a-zA-Z]*)",home.ShowAbout),
 
    (r"/members/m/([0-9]+)/write",home.EditArticle),
+   (r"/members/m/([0-9]+)/delete",home.DeleteArticle),
    (r"/members/m/([0-9]+)/profile",home.EditProfile),
    #(r"/members/m/([0-9]+)/setting/",admin.EditProfile),
 
@@ -38,12 +40,16 @@ homeurls = [
    (r"/signup",admin.Signup),
    (r"/signout",admin.Signout),
    (r"/admin",admin.AdminHome),
+   (r"/admin/deltype",admin.DelType),
    (r"/admin/editpage",admin.EditPage),
+   (r"/admin/delpage",admin.DelPage),
    (r"/admin/limits",admin.EditLimits),
    (r"/admin/reports",admin.ListReports),
    (r"/admin/slide",admin.SlideOption),
    (r"/admin/link",admin.LinkOption),
+   (r"/admin/dellink",admin.DelLink),
    (r"/admin/meetinfo",admin.MeetinfoOption),
+   (r"/admin/delmeetinfo",admin.DelMeetinfo),
    (r"/admin/changechecked",admin.ChangeChecked),
 
    (r"/admin/mail",mail.MailSending),

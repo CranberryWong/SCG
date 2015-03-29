@@ -23,3 +23,10 @@ class PageListObject(object):
         self.ppubtime = page.ppubtime.ctime()[:16]
         self.pchgtime = page.pchgtime.ctime()[:16]
         self.ppic = page.ppic
+
+class MeetinfoObject(object):
+    def __init__(self, meetinfo):
+        self.mid = meetinfo.mid
+        self.mtitle = meetinfo.mtitle
+        self.mcontent = meetinfo.mcontent
+        self.mcettime = meetinfo.mcettime.ctime()[:16]

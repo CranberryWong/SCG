@@ -95,7 +95,6 @@ class Page(Base):
         self.pcontent = pcontent
         self.ppubtime = datetime.now()
         self.pchgtime = datetime.now()
-        self.ppic = ppic
 
     def __repr__(self):
         return "<Page('%s')>" % (self.ptitle)

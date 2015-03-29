@@ -83,6 +83,7 @@
         <th>Title</th>
         <th>Publish Time</th>
         <th>Change Time</th>
+        <th>Option</th>
       </tr>
     </thead>
     <tbody>
@@ -92,6 +93,8 @@
         <td>{{ page.ptitle }}</td>
         <td>{{ page.ppubtime }}</td>
         <td>{{ page.pchgtime }}</td>
+        <td><div><span><a href="/admin/editpage?pid={{ page.pid }}">Edit</a></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span><a href="/admin/delpage?pid={{ page.pid }}">Delete</a></span></div>
+</td>
       </tr>
       {% end %}
     </tbody>
@@ -104,6 +107,7 @@
       <tr>
         <th>Id</th>
         <th>Type</th>
+        <th>Option</th>
       </tr>
     </thead>
     <tbody>
@@ -111,9 +115,18 @@
       <tr>
         <td>{{ type.tid }}</td>
         <td>{{ type.typename }}</td>
+        <td><div><span><a href="/admin?tid={{ type.tid }}">Edit</a></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span><a href="/admin/deltype?tid={{ type.tid }}">Delete</a></span></div></td>
       </tr>
       {% end %}
     </tbody>
   </table>
+  <form class="form-inline" method="POST" action="/admin">
+<div class="form-group">
+  <input type="hidden" name="tid" value="{{ typeobj.tid }}">
+<label class="sr-only" for="exampleInputEmail3">Add New Type</label>
+<input type="input" class="form-control" id="exampleInputEmail3" placeholder="Enter New Type" name="typename" value= {{ typeobj.typename }}>
+</div>
+<button type="submit" class="btn btn-default">Submit</button>
+</form>
 </div>
 {% end %}
