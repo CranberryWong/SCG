@@ -1,4 +1,15 @@
 {% extends "home_page.html" %}
+{% block customJSLink %}
+<script>
+$.ajax({
+    url: '/widgets/' + theIdYouGotSomehow,
+    type: 'DELETE',
+    success: function(result) {
+        alert("delete success")
+    }
+});
+</script>
+{% end %}
 {% block subcontent %}
 {% for article in articlelist %}
 <div class="memberfeed">
@@ -7,6 +18,7 @@
 Type:<a href="{{ article.typelink }}">{{ article.type }}</a>
 <p class="blog-post-meta">Create time:{{ article.pubtime }}&nbsp;&nbsp;&nbsp;&nbsp;Change time:{{ article.chgtime }}</p>
 <P> {{ article.subcontent }}<a href="/articles/a/{{ article.id }}">Show all...</a></p>
+<div><span><a href="#">Edit</a></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span><a href="#">Delete</a></span></div>
 </div><!-- /.blog-post -->
 </div>
 {% end %}

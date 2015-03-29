@@ -136,6 +136,12 @@ class ShowAbout(homeBase):
         aboutcontent = markdown.markdown(open(info_path).read().decode('utf8'))
         self.render('home_about.html', aboutcontent = aboutcontent)
 
+class ListByDate(StaticBase):
+    def get(self, year, month):
+        StaticBase.init(self)
+        pass
+
+
 class ShowContact(homeBase):
     def get(self):
         homeBase.init(self)
@@ -191,7 +197,13 @@ class EditArticle(homeBase):
         article = Article(atitle, acontent, uid, taid)
         self.session.add(article)
         self.session.commit()
-        self.write('<script language="javascript">alert("提交成功");self.location="/members/m/\%s"</script>') % str(uid)
+        self.write('<script language="javascript">alert("提交成功");self.location="/members/m/%s"</script>'% str(uid)) 
+
+    def delete(self, aid):
+        self.session.query(Article).filter(Article.aid == aid).delete()
+        self.session.commit()
+        self.write('<script language="javascript">alert("删除成功");self.location="/members/m/%s"</script>'% str(uid))
+
 
 
 class EditProfile(homeBase):
