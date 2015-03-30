@@ -6,23 +6,23 @@
       <form role="form" action="/members/m/{{ id }}/profile" method="POST"  enctype="multipart/form-data">
         <div class="form-group">
           <label for="exampleInputName">Your name</label>
-          <input type="input" class="form-control" id="exampleInputName" placeholder= {{ handler.signeduser }} name="username" disabled>
+          <input type="input" class="form-control" id="exampleInputName" placeholder= {{ current_user }} name="username" disabled>
         </div>
         <div class="form-group">
           <label for="exampleInputCollege">Your College</label>
-          <input type="input" class="form-control" id="exampleInputCollege" placeholder="College" name="ucollege">
+          <input type="input" class="form-control" id="exampleInputCollege" placeholder="College" name="ucollege" value="{{ user.ucollege }}">
         </div>
         <div class="form-group">
           <label for="exampleInputGrade">Your Grade</label>
-          <input type="input" class="form-control" id="exampleInputGrade" placeholder="Grade" name="ugrade">
+          <input type="input" class="form-control" id="exampleInputGrade" placeholder="Grade" name="ugrade" value="{{ user.ugrade }}">
         </div>
         <div class="form-group">
           <label for="exampleInputmajorin">Major in</label>
-          <textarea class="form-control" rows="3"  placeholder="Your domain" name="udomain"></textarea>
+          <textarea class="form-control" rows="3"  placeholder="Your domain" name="udomain">{{ user.udomain }}</textarea>
         </div>
         <div class="form-group">
           <label for="exampleInputbio">BIO</label>
-          <textarea class="form-control" rows="3"  placeholder="Your bio" name="ubio"></textarea>
+          <textarea class="form-control" rows="3"  placeholder="Your bio" name="ubio">{{ user.ubio }}</textarea>
         </div>
 
         <div class="form-group">
