@@ -80,14 +80,15 @@ class Home(homeBase):
         self.render('home_index.html', pagelist = pagelist, informlist = informlist)
 
 class ListProjects(StaticBase):
-    def get(self, pid):
+    def get(self):
         #homeBase.init(self)
         StaticBase.init(self)
         self.title = 'Projects'
+        targetpage = int(self.get_argument('page',default='1'))
         pagelist = []
         for one in self.session.query(Page).all():
             pagelist.insert(0, PageListObject(one))
-        pageList, self.pagination = generatePagination('/projects/', pagelist, pid)
+        pageList, self.pagination = generatePagination('/projects?page=', pagelist, targetpage)
         self.render('home_plist.html', list = pageList)
 
 class ShowProjects(StaticBase):
@@ -111,14 +112,15 @@ class ListMembers(homeBase):
         self.render('home_members.html', memberlist = memberlist, mtype = mtype, degree = degree)
 
 class ListArticles(StaticBase):
-    def get(self, aid):
+    def get(self):
         StaticBase.init(self)
         self.title = 'Articles'
+        targetpage = int(self.get_argument('page',default='1'))
         articlelist = []
         for one in self.session.query(Article).order_by(Article.apubtime).all():
             articlelist.insert(0, ArticleListObject(one))
-        alist, self.pagination = generatePagination('/articles/', articlelist, aid)
-        self.render('home_alist.html', list = alist)
+        alist, self.pagination = generatePagination('/articles?page=', articlelist, targetpage)
+        self.render('home_alist.html', list = alist, thisquery=None)
 
 class ShowArticles(StaticBase):
     def get(self, id):
@@ -135,12 +137,6 @@ class ShowAbout(homeBase):
         info_path = os.path.join(self.get_template_path(), 'aboutme.md')
         aboutcontent = markdown.markdown(open(info_path).read().decode('utf8'))
         self.render('home_about.html', aboutcontent = aboutcontent)
-
-class ListByDate(StaticBase):
-    def get(self, year, month):
-        StaticBase.init(self)
-        pass
-
 
 class ShowContact(homeBase):
     def get(self):
@@ -261,14 +257,25 @@ class EditProfile(homeBase):
         self.session.commit()
         self.write('<script language="javascript">alert("OK,Entering your own homepage!!");self.location="/";</script>')
 
-class ListbyDate(homeBase):
+class ListByDate(StaticBase):
     def get(self,year,month):
-        homeBase.init(self)
+        StaticBase.init(self)
         targetpage = int(self.get_argument('page',default='1'))
-        self.pagination = Pagination()
-        bloglist = [ArticleListObject(article) for article in self.session.query(Article).all() if article.pubtime.year == int(year) and article.pubtime.month == int(month)]
+        articlelist = [ArticleListObject(article) for article in self.session.query(Article).all() if article.apubtime.year == int(year) and article.apubtime.month == int(month)]
 
-        bloglist, self.pagination = generatePagination('/q/date/' + year + '/' + month + '?page=', bloglist, targetpage)
+        list, self.pagination = generatePagination('/q/date/' + year + '/' + month + '?page=', articlelist, targetpage)
 
         self.title = "归档：" + str(year) + "年" + str(month) + "月"
-        self.render("home_alist.html", bloglist = bloglist, thisquery = "/q/date/" + year + "/" + month )
+        self.render("home_alist.html", list = list, thisquery = "归档：" + str(year) + "年" + str(month) + "月" )
+
+class ListByType(StaticBase):
+    def get(self, typename):
+        StaticBase.init(self)
+        targetpage = int(self.get_argument('page',default='1'))
+        tid = self.session.query(Type).filter(Type.typename == typename).first().tid
+        articlelist = [ArticleListObject(article) for article in self.session.query(Article).filter(Article.taid == tid).all()]
+
+        list, self.pagination = generatePagination('/type/'+typename+'?page=', articlelist, targetpage)
+
+        self.title = "Type：" + str(typename)
+        self.render("home_alist.html", list = list, thisquery = "Type：" + str(typename))

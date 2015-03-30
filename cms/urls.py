@@ -3,7 +3,7 @@
 
 import os
 import tornado.web
-from handlers import admin, home, upload, exception, mail
+from handlers import admin, home, upload, exception, mail, search
 
 SETTINGS = dict(
    debug = True,
@@ -18,16 +18,18 @@ homeurls = [
 
    #前台
    (r"/",home.Home),
-   (r"/projects/([0-9]+)",home.ListProjects),
-   (r"/articles/([0-9]+)",home.ListArticles),
+   (r"/projects",home.ListProjects),
+   (r"/articles",home.ListArticles),
    (r"/members",home.ListMembers),
    (r"/about",home.ShowAbout),
    (r"/contact",home.ShowContact),
-   (r"/upload/?",upload.FileUpload),
+   (r"/upload?",upload.FileUpload),
    (r"/projects/p/([0-9]+)",home.ShowProjects),
    (r"/articles/a/([0-9]+)",home.ShowArticles),
    (r"/members/m/([0-9]+)",home.ShowMyPage),
    (r'/q/date/([0-9]+)/([0-9]+)',home.ListByDate),
+   (r'/type/([0-9a-zA-Z]*)', home.ListByType),
+   (r'/search', search.ListSearch),
    #(r"/type/([0-9a-zA-Z]*)",home.ShowAbout),
 
    (r"/members/m/([0-9]+)/write",home.EditArticle),
@@ -46,11 +48,14 @@ homeurls = [
    (r"/admin/limits",admin.EditLimits),
    (r"/admin/reports",admin.ListReports),
    (r"/admin/slide",admin.SlideOption),
+   (r"/admin/delslide",admin.DelSlide),
    (r"/admin/link",admin.LinkOption),
    (r"/admin/dellink",admin.DelLink),
    (r"/admin/meetinfo",admin.MeetinfoOption),
    (r"/admin/delmeetinfo",admin.DelMeetinfo),
    (r"/admin/changechecked",admin.ChangeChecked),
+
+   (r"/admin/settings",admin.ChangeSettings),
 
    (r"/admin/mail",mail.MailSending),
 

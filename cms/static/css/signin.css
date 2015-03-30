@@ -1,9 +1,24 @@
 body {
   padding-top: 40px;
   padding-bottom: 40px;
-  background-color: #eee;
-  background-image:url(../images/signback.jpg);
+  background-color: #2472b4;
+  /*background-image:url(../images/signback.jpg);*/
   background-repeat:no-repeat;
+  height:100%;
+  width:100%;
+}
+.container{
+  position:relative;
+}
+.ab{
+  z-index:3;
+}
+
+#particles-js{
+  position:absolute;
+  height:100%;
+  width:100%;
+  z-index:2;
 }
 
 .form-signin {
@@ -28,7 +43,7 @@ body {
   font-size: 16px;
 }
 .form-signin .form-control:focus {
-  z-index: 2;
+  z-index: 20;
 }
 .form-signin input[type="email"] {
   margin-bottom: -1px;

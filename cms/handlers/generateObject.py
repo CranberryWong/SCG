@@ -8,7 +8,7 @@ class ArticleListObject(object):
         self.subcontent = article.acontent[:300]
         self.content = article.acontent
         self.type = article.atype.typename
-        self.typelink = ''
+        self.typelink = '/type/'+self.type
         self.pubtime = article.apubtime.ctime()[:16]
         self.chgtime = article.achgtime.ctime()[:16]
         self.user = article.auser.username
@@ -30,3 +30,13 @@ class MeetinfoObject(object):
         self.mtitle = meetinfo.mtitle
         self.mcontent = meetinfo.mcontent
         self.mcettime = meetinfo.mcettime.ctime()[:16]
+
+class InformObject(object):
+    def __init__(self, inform):
+        self.iid = inform.iid
+        self.ititle = inform.ititle
+        self.iabstract = inform.iabstract
+        self.iurl = inform.iurl
+        self.ipic = inform.ipic
+        self.icettime = inform.icettime.ctime()[:16]
+        self.ibtnview = inform.ibtnview

@@ -6,7 +6,7 @@ import time
 import os
 from models.entity import User, Article, Type, Page, Contact, Upload, Inform, Limits, Links, Meetinfo
 from models.entity import getSession
-from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject
+from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject, InformObject
 import hashlib
 import json
 from datetime import datetime
@@ -117,7 +117,7 @@ class AdminHome(SignValidateBase, StaticData):
             typeobj = self.session.query(Type).filter(Type.tid == tid).first()
             typeobj.typename = typename
             self.session.commit()
-        self.redirect('/admin')
+        self.redirect('/admin#nav-type')
 
 class EditPage(SignValidateBase, StaticData):
     @tornado.web.authenticated
@@ -134,11 +134,11 @@ class EditPage(SignValidateBase, StaticData):
     def post(self):
         self.title = 'Dashboard Edit'
         StaticData.__init__(self)
-        pid = self.get_argument('pid', default=None)
+        pid = self.get_argument('pid', default='None')
         print pid, type(pid)
         ptitle = self.get_argument('ptitle', default='')
         pcontent = self.get_argument('pcontent', default='')
-        if pid == None:
+        if pid == 'None':
             page = Page(ptitle, pcontent)
             if 'file' in self.request.files:
                 file_dict_list = self.request.files['file']
@@ -159,8 +159,8 @@ class EditPage(SignValidateBase, StaticData):
                 file_dict_list = self.request.files['file']
                 for file_dict in file_dict_list:
                     filename = nameRewrite(file_dict["filename"]).encode('utf8')
-                    if page.ppic != page_path + filename[:len(filename)-10]:
-                        page.ppic = page_path + filename
+                    if page.ppic[:len(filename)-10] != '/static/page/' + filename[:len(filename)-10]:
+                        print page.ppic[:len(filename)-10],'/static/page/' + filename[:len(filename)-10]
                         data = file_dict["body"]
                         with open(page_path + filename, 'w') as f:
                             f.write(data)
@@ -192,7 +192,7 @@ class ChangeChecked(tornado.web.RequestHandler, StaticData):
         uid = self.get_argument('uid')
         uchecked = self.get_argument('uchecked')
         print uid, uchecked, type(uchecked)
-        if uchecked == 'false':
+        if uchecked == 'False':
             uchecked = False
         else:
             uchecked = True
@@ -222,30 +222,67 @@ class SlideOption(SignValidateBase, StaticData):
     @tornado.web.authenticated
     def get(self):
         self.title = 'Slide Option'
-        informs = self.session.query(Inform).all()
-        self.render("admin_slide.html", informs = informs)
+        iid = self.get_argument('iid', default=None)
+        informs = []
+        inform = self.session.query(Inform).all()
+        for one in inform:
+            informs.insert(0, InformObject(one))
+        if iid == None:
+            informobj = Inform('','')
+            informobj.iid = None
+        else:
+            informobj = self.session.query(Inform).filter(Inform.iid == iid).first()
+        self.render("admin_slide.html", informs = informs, informobj = informobj)
 
     def post(self):
         self.title = 'Slide Option'
+        iid = self.get_argument('iid', default='None')
         ititle = self.get_argument('ititle', default='')
         iabstract = self.get_argument('iabstract', default='')
         iurl = self.get_argument('iurl', default='')
         ibtnview = self.get_argument('ibtnview', default='View Detail')
-        inform = Inform(ititle, iabstract)
-        inform.iurl = iurl
-        inform.itynview = ibtnview
-        if 'file' in self.request.files:
-            file_dict_list = self.request.files['file']
-            for file_dict in file_dict_list:
-                filename = nameRewrite(file_dict["filename"]).encode('utf8')
-                data = file_dict["body"]
-                with open(inform_path + filename, 'w') as f:
-                    f.write(data)
-                    print filename
-            inform.ipic = '/static/inform/' + filename
-        self.session.add(inform)
-        self.session.commit()
+        if iid == 'None':
+            inform = Inform(ititle, iabstract)
+            inform.iurl = iurl
+            inform.itynview = ibtnview
+            if 'file' in self.request.files:
+                file_dict_list = self.request.files['file']
+                for file_dict in file_dict_list:
+                    filename = nameRewrite(file_dict["filename"]).encode('utf8')
+                    data = file_dict["body"]
+                    with open(inform_path + filename, 'w') as f:
+                        f.write(data)
+                        print filename
+                inform.ipic = '/static/inform/' + filename
+            self.session.add(inform)
+            self.session.commit()
+        else:
+            slide = self.session.query(Inform).filter(Inform.iid == iid).first()
+            slide.ititle = ititle
+            slide.iabstract = iabstract
+            slide.iurl = iurl
+            slide.ibtnview = ibtnview
+            if 'file' in self.request.files:
+                file_dict_list = self.request.files['file']
+                for file_dict in file_dict_list:
+                    filename = nameRewrite(file_dict["filename"]).encode('utf8')
+                    if slide.iurl[:len(filename)-10] != '/static/inform/' + filename[:len(filename)-10]:
+                        print inform.iurl[:len(filename)-10], '/static/inform/' + filename[:len(filename)-10]
+                        data = file_dict["body"]
+                        with open(inform_path + filename, 'w') as f:
+                            f.write(data)
+                            print filename
+                            slide.iurl = '/static/inform/' + filename
+            self.session.commit()
         self.write('<script language="javascript">alert("提交成功");self.location="/admin";</script>')
+
+class DelSlide(SignValidateBase, StaticData):
+    @tornado.web.authenticated
+    def get(self):
+        iid = self.get_argument('iid', default=None)
+        self.session.query(Inform).filter(Inform.iid == iid).delete()
+        self.session.commit()
+        self.redirect('/admin/slide')
 
 class LinkOption(SignValidateBase, StaticData):
     @tornado.web.authenticated
@@ -335,7 +372,12 @@ class DelType(SignValidateBase, StaticData):
         tid = self.get_argument('tid', default=None)
         self.session.query(Type).filter(Type.tid == tid).delete()
         self.session.commit()
-        self.redirect('/admin')
+        self.redirect('/admin#nav-type')
 
 class AdminStatistic():
     pass
+
+class ChangeSettings(SignValidateBase, StaticData):
+    @tornado.web.authenticated
+    def get(self):
+        pass

@@ -7,7 +7,6 @@
 <script src="/static/js/bootstrap-switch.js"></script>
 <script src="/static/js/app.js"></script>
 <script>
-$("[name='my-checkbox']").bootstrapSwitch();
 $(document).ready(function(){
   $("#check").click(function(){
     $.post("/admin/changechecked",
@@ -17,6 +16,13 @@ $(document).ready(function(){
     },
     function(data, status){
       console.log("Data:"+ data + "\nStatus:" + status);
+      if($(this).text() === "False"){
+      $(this).text() = "True";
+      console.log($(this).text());}
+      else{
+        $(this).text() = "False";
+        console.log($(this).text());
+      }
     });
   });
 });

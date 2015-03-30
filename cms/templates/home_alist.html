@@ -1,6 +1,12 @@
 {% extends "home_listbase.html" %}
 {% block active3 %}class="active"{% end %}
+
     {% block submaincontent %}
+    {% if thisquery != None %}
+    <ol class="breadcrumb">
+      <li class="active">{{ thisquery }}</li>
+    </ol>
+    {% end %}
     {% for article in list %}
     <div class="blog-post">
       <h2 class="blog-post-title"><a href="/articles/a/{{ article.id }}">{{ article.title }}</a></h2>

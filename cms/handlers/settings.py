@@ -9,3 +9,7 @@ MAILSETTINGS = dict(
    mail_smtp_port = 465,
    mail_encode = 'utf-8',
 )
+
+SITESETTINGS = dict(
+    
+)

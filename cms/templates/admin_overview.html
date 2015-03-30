@@ -1,13 +1,13 @@
 {% extends "admin_base.html" %}
-{% block active1 %}class="active"{% end %}
-{% block subnav %}
-<ul class="nav nav-sidebar">
-  <li><a href="#nav-user">User</a></li>
-  <li><a href="#nav-article">Article</a></li>
-  <li><a href="#nav-page">Page</a></li>
-  <li><a href="#nav-type">Type</a></li>
-</ul>
+{% block customJSLink %}
+<script>
+$('#myTab a').click(function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+})
+</script>
 {% end %}
+{% block active1 %}class="active"{% end %}
 {% block graghic %}
 <h1 class="page-header">Admin</h1>
 
@@ -24,109 +24,124 @@
 </div>
 {% end %}
 {% block maincontent %}
-<h2 class="sub-header" id="nav-user">Users</h2>
-<div class="table-responsive">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>Username</th>
-        <th>BIO</th>
-        <th>Grade</th>
-        <th>Domain</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for user in userlist %}
-      <tr>
-        <td>{{ user.uid }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ user.ubio }}</td>
-        <td>{{ user.ugrade }}</td>
-        <td>{{ user.udomain }}</td>
-      </tr>
-      {% end %}
-    </tbody>
-  </table>
-</div>
-<h2 class="sub-header" id="nav-article">All Articles</h2>
-<div class="table-responsive">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>Title</th>
-        <th>Publish Time</th>
-        <th>Change Time</th>
-        <th>Editor</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for article in articlelist %}
-      <tr>
-        <td>{{ article.id }}</td>
-        <td>{{ article.title }}</td>
-        <td>{{ article.pubtime }}</td>
-        <td>{{ article.chgtime }}</td>
-        <td>{{ article.user }}</td>
-      </tr>
-      {% end %}
-    </tbody>
-  </table>
-</div>
-<h2 class="sub-header" id="nav-page">All Pages</h2>
-<div class="table-responsive">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>Title</th>
-        <th>Publish Time</th>
-        <th>Change Time</th>
-        <th>Option</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for page in pagelist %}
-      <tr>
-        <td>{{ page.pid }}</td>
-        <td>{{ page.ptitle }}</td>
-        <td>{{ page.ppubtime }}</td>
-        <td>{{ page.pchgtime }}</td>
-        <td><div><span><a href="/admin/editpage?pid={{ page.pid }}">Edit</a></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span><a href="/admin/delpage?pid={{ page.pid }}">Delete</a></span></div>
-</td>
-      </tr>
-      {% end %}
-    </tbody>
-  </table>
-</div>
-<h2 class="sub-header" id="nav-type">All Types</h2>
-<div class="table-responsive">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>Type</th>
-        <th>Option</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for type in typelist %}
-      <tr>
-        <td>{{ type.tid }}</td>
-        <td>{{ type.typename }}</td>
-        <td><div><span><a href="/admin?tid={{ type.tid }}">Edit</a></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span><a href="/admin/deltype?tid={{ type.tid }}">Delete</a></span></div></td>
-      </tr>
-      {% end %}
-    </tbody>
-  </table>
-  <form class="form-inline" method="POST" action="/admin">
-<div class="form-group">
-  <input type="hidden" name="tid" value="{{ typeobj.tid }}">
-<label class="sr-only" for="exampleInputEmail3">Add New Type</label>
-<input type="input" class="form-control" id="exampleInputEmail3" placeholder="Enter New Type" name="typename" value= {{ typeobj.typename }}>
-</div>
-<button type="submit" class="btn btn-default">Submit</button>
-</form>
-</div>
+<ul id="myTab" class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active"><a href="#home" id="home-tab" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="true">Users</a></li>
+      <li role="presentation" class=""><a href="#profile" role="tab" id="profile-tab" data-toggle="tab" aria-controls="profile" aria-expanded="false">Articles</a></li>
+      <li role="presentation" class="dropdown">
+        <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents" aria-expanded="false">More <span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1" id="myTabDrop1-contents">
+          <li><a href="#dropdown1" tabindex="-1" role="tab" id="dropdown1-tab" data-toggle="tab" aria-controls="dropdown1">Pages</a></li>
+          <li><a href="#dropdown2" tabindex="-1" role="tab" id="dropdown2-tab" data-toggle="tab" aria-controls="dropdown2">Types</a></li>
+        </ul>
+      </li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+      <div role="tabpanel" class="tab-pane fade active in" id="home" aria-labelledby="home-tab">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Username</th>
+
+                <th>Grade</th>
+                <th>Domain</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for user in userlist %}
+              <tr>
+                <td>{{ user.uid }}</td>
+                <td>{{ user.username }}</td>
+
+                <td>{{ user.ugrade }}</td>
+                <td>{{ user.udomain }}</td>
+              </tr>
+              {% end %}
+            </tbody>
+          </table>
+        </div>      </div>
+      <div role="tabpanel" class="tab-pane fade" id="profile" aria-labelledby="profile-tab">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Publish Time</th>
+                <th>Change Time</th>
+                <th>Editor</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for article in articlelist %}
+              <tr>
+                <td>{{ article.id }}</td>
+                <td>{{ article.title }}</td>
+                <td>{{ article.pubtime }}</td>
+                <td>{{ article.chgtime }}</td>
+                <td>{{ article.user }}</td>
+              </tr>
+              {% end %}
+            </tbody>
+          </table>
+        </div>      </div>
+      <div role="tabpanel" class="tab-pane fade" id="dropdown1" aria-labelledby="dropdown1-tab">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Publish Time</th>
+                <th>Change Time</th>
+                <th>Option</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for page in pagelist %}
+              <tr>
+                <td>{{ page.pid }}</td>
+                <td>{{ page.ptitle }}</td>
+                <td>{{ page.ppubtime }}</td>
+                <td>{{ page.pchgtime }}</td>
+                <td><div><span><a href="/admin/editpage?pid={{ page.pid }}">Edit</a></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span><a href="/admin/delpage?pid={{ page.pid }}">Delete</a></span></div>
+        </td>
+              </tr>
+              {% end %}
+            </tbody>
+          </table>
+        </div>      </div>
+      <div role="tabpanel" class="tab-pane fade" id="dropdown2" aria-labelledby="dropdown2-tab">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Type</th>
+                <th>Option</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for type in typelist %}
+              <tr>
+                <td>{{ type.tid }}</td>
+                <td>{{ type.typename }}</td>
+                <td><div><span><a href="/admin?tid={{ type.tid }}">Edit</a></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span><a href="/admin/deltype?tid={{ type.tid }}">Delete</a></span></div></td>
+              </tr>
+              {% end %}
+            </tbody>
+          </table>
+          <form class="form-inline" method="POST" action="/admin">
+        <div class="form-group">
+          <input type="hidden" name="tid" value="{{ typeobj.tid }}">
+        <label class="sr-only" for="exampleInputEmail3">Add New Type</label>
+        <input type="input" class="form-control" id="exampleInputEmail3" placeholder="Enter New Type" name="typename" value= {{ typeobj.typename }}>
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+        </div>
+        </div>
+      </div>
+    </div>
 {% end %}
