@@ -19,12 +19,14 @@ ng-app="myapp"
 
       <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
         <div class="sidebar-module sidebar-module-inset">
+          {% if handler.meetinfo != None %}
           <h4><span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>&nbsp;&nbsp;Meeting Info</h4>
           <div class="well">
             <p><strong>{{ handler.meetinfo.mtitle }}</strong></p>
             <p>{{ handler.meetinfo.mcontent }}</p>
             <p>{{ handler.meetinfo.mcettime }}</p>
         </div>
+        {% end %}
         </div>
         <div class="sidebar-module">
           <h4><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span>&nbsp;&nbsp;Archives</h4>

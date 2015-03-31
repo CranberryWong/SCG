@@ -54,6 +54,7 @@ homeurls = [
    (r"/admin/meetinfo",admin.MeetinfoOption),
    (r"/admin/delmeetinfo",admin.DelMeetinfo),
    (r"/admin/changechecked",admin.ChangeChecked),
+   (r"/admin/changelimit",admin.ChangeLimit),
 
    (r"/admin/settings",admin.ChangeSettings),
 

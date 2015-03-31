@@ -7,7 +7,7 @@
 <script src="/static/js/bootstrap-switch.js"></script>
 <script src="/static/js/app.js"></script>
 <script>
-$(document).ready(function(){
+/*$(document).ready(function(){
   $("#check").click(function(){
     $.post("/admin/changechecked",
     {
@@ -17,10 +17,10 @@ $(document).ready(function(){
     function(data, status){
       console.log("Data:"+ data + "\nStatus:" + status);
       if($(this).text() === "False"){
-      $(this).text() = "True";
+      $(this).innerHTML = "True";
       console.log($(this).text());}
       else{
-        $(this).text() = "False";
+        $(this).innerHTML = "False";
         console.log($(this).text());
       }
     });
@@ -37,7 +37,7 @@ $(document).ready(function(){
       console.log("Data:"+ data + "\nStatus:" + status);
     });
   });
-});
+});*/
 </script>
 {% end %}
 {% block active3 %}class="active"{% end %}
@@ -58,10 +58,10 @@ $(document).ready(function(){
       <tr>
         <td>{{ user.uid }}</td>
         <td>{{ user.username }}</td>
-        <td><button id="check" type="button" class="btn btn-default btn-xs" value="{{ user.uid }}">{{ user.ucheck }}</button></td>
+        <td><a href="/admin/changechecked?uid={{ user.uid }}&ucheck={{ user.ucheck }}"><button id="check" type="button" class="btn btn-default btn-xs" value="{{ user.uid }}">{{ user.ucheck }}</button></a></td>
         <td><div class="btn-group btn-group-xs" role="group" aria-label="Small button group" id=>
           {% for limit in limitlist %}
-          <button id="limits" type="button" class="btn btn-default">{{ limit.lname }}</button>
+          <button id="limits" type="button" class="btn btn-default"><a href="/admin/changelimit?uid={{ user.uid }}&lid={{ limit.lid }}">{{ limit.lname }}</a></button>
           {% end %}
       </div></td>
       </tr>

@@ -23,13 +23,16 @@ def nameRewrite(filename):
         filename = name_split[0] + str(file_timestamp) + '.' + name_split[1]
     return filename
 
-class StaticData(object):
-   def __init__(self):
-      self.session = getSession()
-
 class SignValidateBase(tornado.web.RequestHandler):
    def get_current_user(self):
       return self.get_secure_cookie('username')
+
+class StaticData(object):
+   def __init__(self):
+      self.session = getSession()
+      self.signeduser = SignValidateBase.get_current_user(self)
+      if self.session.query(User).filter(User.username == self.signeduser).first().luid == 1:
+          self.write('<script language="javascript">alert("你不适合这里！！");self.location="/signin";</script>')
 
 class Signin(SignValidateBase, StaticData):
    def get(self):
@@ -184,13 +187,14 @@ class EditLimits(SignValidateBase, StaticData):
         self.title = 'Dashboard Limits'
         StaticData.__init__(self)
         limitlist = self.session.query(Limits).all()
-        userlist = self.session.query(User).all()
+        userlist = self.session.query(User).order_by(User.uid.desc()).all()
         self.render('admin_limits.html', userlist = userlist, limitlist = limitlist)
 
-class ChangeChecked(tornado.web.RequestHandler, StaticData):
-    def post(self):
+class ChangeChecked(SignValidateBase, StaticData):
+    @tornado.web.authenticated
+    def get(self):
         uid = self.get_argument('uid')
-        uchecked = self.get_argument('uchecked')
+        uchecked = self.get_argument('ucheck')
         print uid, uchecked, type(uchecked)
         if uchecked == 'False':
             uchecked = False
@@ -201,14 +205,17 @@ class ChangeChecked(tornado.web.RequestHandler, StaticData):
         user.ucheck = not uchecked
         print user.ucheck
         self.session.commit()
+        self.redirect('/admin/limits')
 
-class ChangeLimit(tornado.web.RequestHandler, StaticData):
-    def post(self):
-        uid = self.get_argument('uid')
-        luid = self.get_argument('luid')
+class ChangeLimit(SignValidateBase, StaticData):
+    @tornado.web.authenticated
+    def get(self):
+        uid = self.get_argument('uid', default=None)
+        luid = self.get_argument('lid', default=None)
         user = self.session.query(User).filter(User.uid == uid).first()
         user.luid = luid
         self.session.commit()
+        self.redirect('/admin/limits')
 
 class ListReports(SignValidateBase, StaticData):
     @tornado.web.authenticated
@@ -363,7 +370,7 @@ class DelMeetinfo(SignValidateBase, StaticData):
     def get(self):
         mid = self.get_argument('mid', default=None)
         self.session.query(Meetinfo).filter(Meetinfo.mid == mid).delete()
-        self.session.commmit()
+        self.session.commit()
         self.redirect('/admin/meetinfo')
 
 class DelType(SignValidateBase, StaticData):

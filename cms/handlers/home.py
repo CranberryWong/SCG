@@ -37,7 +37,7 @@ class StaticBase(homeBase):
         homeBase.init(self)
         #所有类型
         self.alltype = self.session.query(Type)
-        self.meetinfo = MeetinfoObject(self.session.query(Meetinfo).order_by(Meetinfo.mcettime.desc()).first())
+        self.meetinfo = MeetinfoObject(self.session.query(Meetinfo).order_by(Meetinfo.mcettime.desc()).first()) if self.session.query(Meetinfo).order_by(Meetinfo.mcettime.desc()).first() else None
         self.links = self.session.query(Links).all()
         #归档
         articlelist = self.session.query(Article).order_by(Article.apubtime.desc()).all()
@@ -106,9 +106,9 @@ class ListMembers(homeBase):
         mtype = ['All', 'Master', 'Ph.D', 'Bachelor', 'Professor', 'Guest Prof']
         degree = self.get_argument('degree', default='All')
         if degree == 'All':
-            memberlist = self.session.query(User).all()
+            memberlist = self.session.query(User).filter(User.ucheck == True).all()
         else:
-            memberlist = self.session.query(User).filter(User.ugrade == degree).all()
+            memberlist = self.session.query(User).filter(User.ugrade == degree).filter(User.ucheck == True).all()
         self.render('home_members.html', memberlist = memberlist, mtype = mtype, degree = degree)
 
 class ListArticles(StaticBase):
