@@ -61,7 +61,7 @@ $(document).ready(function(){
         <td><a href="/admin/changechecked?uid={{ user.uid }}&ucheck={{ user.ucheck }}"><button id="check" type="button" class="btn btn-default btn-xs" value="{{ user.uid }}">{{ user.ucheck }}</button></a></td>
         <td><div class="btn-group btn-group-xs" role="group" aria-label="Small button group" id=>
           {% for limit in limitlist %}
-          <button id="limits" type="button" class="btn btn-default"><a href="/admin/changelimit?uid={{ user.uid }}&lid={{ limit.lid }}">{{ limit.lname }}</a></button>
+          <button id="limits" type="button" class="btn {% if user.luid == limit.lid %}btn-info"{% else %}btn-default"{% end %}><a href="/admin/changelimit?uid={{ user.uid }}&lid={{ limit.lid }}">{{ limit.lname }}</a></button>
           {% end %}
       </div></td>
       </tr>
