@@ -4,8 +4,10 @@
 import tornado.web
 import time
 import os
+import markdown
 from models.entity import User, Article, Type, Page, Contact, Upload, Inform, Limits, Links, Meetinfo
 from models.entity import getSession
+from handlers.settings import SITESETTINGS
 from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject, InformObject
 import hashlib
 import json
@@ -27,20 +29,22 @@ class SignValidateBase(tornado.web.RequestHandler):
    def get_current_user(self):
       return self.get_secure_cookie('username')
 
-class StaticData(object):
-   def __init__(self):
+class StaticData(SignValidateBase):
+   def init(self):
       self.session = getSession()
+      self.sitename = SITESETTINGS['site_name']
+      self.siteversion = SITESETTINGS['site_version']
       self.signeduser = SignValidateBase.get_current_user(self)
       if self.session.query(User).filter(User.username == self.signeduser).first().luid == 1:
           self.write('<script language="javascript">alert("你不适合这里！！");self.location="/signin";</script>')
 
-class Signin(SignValidateBase, StaticData):
+class Signin(SignValidateBase):
    def get(self):
       self.title = 'Sign in'
       self.render('signin.html')
 
    def post(self):
-      StaticData.__init__(self)
+      self.session = getSession()
       username = self.get_argument('username', default='')
       password = self.get_argument('password', default='')
       md5_psw = hashlib.md5(password).hexdigest()
@@ -55,19 +59,20 @@ class Signin(SignValidateBase, StaticData):
               self.write('<script language="javascript">alert("对不起，账户需管理员确认后方能生效");self.location="/signin";</script>')
       else:
          self.write('<script language="javascript">alert("用户名或密码错误");self.location="/signin";</script>')
+      self.session.close()
 
 class Signout(SignValidateBase):
    def get(self):
       self.clear_cookie('username')
       self.redirect('/')
 
-class Signup(SignValidateBase, StaticData):
+class Signup(StaticData):
    def get(self):
       self.title = 'Sign Up'
       self.render('signup.html')
 
    def post(self):
-      StaticData.__init__(self)
+      StaticData.init(self)
       username = self.get_argument('username', default='')
       password = self.get_argument('password', default='')
       passvali = self.get_argument('passvali', default='')
@@ -85,11 +90,12 @@ class Signup(SignValidateBase, StaticData):
               self.write('<script language="javascript">alert("注册成功");self.location="/";</script>')
       else:
           self.write('<script language="javascript">alert("密码不匹配");self.location="/signup";</script>')
+      self.session.close()
 
-class AdminHome(SignValidateBase, StaticData):
+class AdminHome(StaticData):
     @tornado.web.authenticated
     def get(self):
-        StaticData.__init__(self)
+        StaticData.init(self)
         self.title = 'Dashboard'
         articlelist = []
         pagelist = []
@@ -108,8 +114,10 @@ class AdminHome(SignValidateBase, StaticData):
         else:
             typeobj = self.session.query(Type).filter(Type.tid == tid).first()
         self.render('admin_overview.html', userlist = userlist, articlelist = articlelist, pagelist = pagelist, typelist = typelist, typeobj = typeobj)
+        self.session.close()
 
     def post(self):
+        StaticData.init(self)
         tid = self.get_argument('tid', default='None')
         typename = self.get_argument('typename', default='')
         if tid == 'None':
@@ -121,10 +129,12 @@ class AdminHome(SignValidateBase, StaticData):
             typeobj.typename = typename
             self.session.commit()
         self.redirect('/admin#nav-type')
+        self.session.close()
 
-class EditPage(SignValidateBase, StaticData):
+class EditPage(StaticData):
     @tornado.web.authenticated
     def get(self):
+        StaticData.init(self)
         self.title = 'Dashboard Edit'
         pid = self.get_argument('pid', default=None)
         if pid == None:
@@ -133,10 +143,11 @@ class EditPage(SignValidateBase, StaticData):
         else:
             page = self.session.query(Page).filter(Page.pid == pid).first()
         self.render('admin_editpage.html', active2 = 'class="active"', page = page)
+        self.session.close()
 
     def post(self):
         self.title = 'Dashboard Edit'
-        StaticData.__init__(self)
+        StaticData.init(self)
         pid = self.get_argument('pid', default='None')
         print pid, type(pid)
         ptitle = self.get_argument('ptitle', default='')
@@ -172,27 +183,32 @@ class EditPage(SignValidateBase, StaticData):
             page.pchgtime = datetime.now()
             self.session.commit()
         self.write('<script language="javascript">alert("提交成功");self.location="/admin/editpage"</script>')
+        self.session.close()
 
-class DelPage(SignValidateBase, StaticData):
+class DelPage(StaticData):
     @tornado.web.authenticated
     def get(self):
+        StaticData.init(self)
         pid = self.get_argument('pid', default=None)
         self.session.query(Page).filter(Page.pid == pid).delete()
         self.session.commit()
         self.redirect('/admin')
+        self.session.close()
 
-class EditLimits(SignValidateBase, StaticData):
+class EditLimits(StaticData):
     @tornado.web.authenticated
     def get(self):
         self.title = 'Dashboard Limits'
-        StaticData.__init__(self)
+        StaticData.init(self)
         limitlist = self.session.query(Limits).all()
         userlist = self.session.query(User).order_by(User.uid.desc()).all()
         self.render('admin_limits.html', userlist = userlist, limitlist = limitlist)
+        self.session.close()
 
-class ChangeChecked(SignValidateBase, StaticData):
+class ChangeChecked(StaticData):
     @tornado.web.authenticated
     def get(self):
+        StaticData.init(self)
         uid = self.get_argument('uid')
         uchecked = self.get_argument('ucheck')
         print uid, uchecked, type(uchecked)
@@ -206,28 +222,36 @@ class ChangeChecked(SignValidateBase, StaticData):
         print user.ucheck
         self.session.commit()
         self.redirect('/admin/limits')
+        self.session.close()
 
-class ChangeLimit(SignValidateBase, StaticData):
+class ChangeLimit(StaticData):
     @tornado.web.authenticated
     def get(self):
+        StaticData.init(self)
         uid = self.get_argument('uid', default=None)
         luid = self.get_argument('lid', default=None)
         user = self.session.query(User).filter(User.uid == uid).first()
-        user.luid = luid
-        self.session.commit()
-        self.redirect('/admin/limits')
+        if self.session.query(User).filter(User.username == self.signeduser).first().luid == 3:
+            user.luid = luid
+            self.session.commit()
+            self.redirect('/admin/limits')
+        else:
+            self.write('<script language="javascript">alert("你并没有权限");self.location="/admin/limits"</script>')
+        self.session.close()
 
-class ListReports(SignValidateBase, StaticData):
+class ListReports(StaticData):
     @tornado.web.authenticated
     def get(self):
         self.title = 'Dashboard Reports'
-        StaticData.__init__(self)
+        StaticData.init(self)
         contactlist = self.session.query(Contact).all()
         self.render('admin_reports.html', contactlist = contactlist)
+        self.session.close()
 
-class SlideOption(SignValidateBase, StaticData):
+class SlideOption(StaticData):
     @tornado.web.authenticated
     def get(self):
+        StaticData.init(self)
         self.title = 'Slide Option'
         iid = self.get_argument('iid', default=None)
         informs = []
@@ -240,8 +264,10 @@ class SlideOption(SignValidateBase, StaticData):
         else:
             informobj = self.session.query(Inform).filter(Inform.iid == iid).first()
         self.render("admin_slide.html", informs = informs, informobj = informobj)
+        self.session.close()
 
     def post(self):
+        StaticData.init(self)
         self.title = 'Slide Option'
         iid = self.get_argument('iid', default='None')
         ititle = self.get_argument('ititle', default='')
@@ -282,18 +308,21 @@ class SlideOption(SignValidateBase, StaticData):
                             slide.iurl = '/static/inform/' + filename
             self.session.commit()
         self.write('<script language="javascript">alert("提交成功");self.location="/admin";</script>')
+        self.session.close()
 
-class DelSlide(SignValidateBase, StaticData):
+class DelSlide(StaticData):
     @tornado.web.authenticated
     def get(self):
+        StaticData.init(self)
         iid = self.get_argument('iid', default=None)
         self.session.query(Inform).filter(Inform.iid == iid).delete()
         self.session.commit()
         self.redirect('/admin/slide')
 
-class LinkOption(SignValidateBase, StaticData):
+class LinkOption(StaticData):
     @tornado.web.authenticated
     def get(self):
+        StaticData.init(self)
         self.title = 'Link Option'
         lkid = self.get_argument('lkid', default=None)
         links = self.session.query(Links).all()
@@ -303,8 +332,10 @@ class LinkOption(SignValidateBase, StaticData):
         else:
             linkobj = self.session.query(Links).filter(Links.lkid == lkid).first()
         self.render('admin_link.html', links = links, linkobj = linkobj)
+        self.session.close()
 
     def post(self):
+        StaticData.init(self)
         self.title = 'Link Option'
         lkid = self.get_argument('lkid', default='None')
         lkname = self.get_argument('lkname', default='')
@@ -322,18 +353,22 @@ class LinkOption(SignValidateBase, StaticData):
             link.lkdescribe = lkdescribe
             self.session.commit()
         self.write('<script language="javascript">alert("提交成功");self.location="/admin/link";</script>')
+        self.session.close()
 
-class DelLink(SignValidateBase, StaticData):
+class DelLink(StaticData):
     @tornado.web.authenticated
     def get(self):
+        StaticData.init(self)
         lkid = self.get_argument('lkid', default=None)
         self.session.query(Links).filter(Links.lkid == lkid).delete()
         self.session.commit()
         self.redirect('/admin/link')
+        self.session.close()
 
-class MeetinfoOption(SignValidateBase, StaticData):
+class MeetinfoOption(StaticData):
     @tornado.web.authenticated
     def get(self):
+        StaticData.init(self)
         self.title = 'Meetinfo Option'
         meetinfos =[]
         meetinfo = self.session.query(Meetinfo).all()
@@ -346,8 +381,10 @@ class MeetinfoOption(SignValidateBase, StaticData):
         else:
             meetinfoobj = self.session.query(Meetinfo).filter(Meetinfo.mid == mid).first()
         self.render('admin_meetinfo.html', meetinfos = meetinfos, meetinfoobj = meetinfoobj)
+        self.session.close()
 
     def post(self):
+        StaticData.init(self)
         self.title = 'Meetinfo Option'
         mtitle = self.get_argument('mtitle', default='')
         mcontent = self.get_argument('mcontent', default='')
@@ -363,28 +400,48 @@ class MeetinfoOption(SignValidateBase, StaticData):
             meetinfo.mcontent = mcontent
             self.session.commit()
             self.write('<script language="javascript">alert("提交成功");self.location="/admin/meetinfo";</script>')
+        self.session.close()
 
-
-class DelMeetinfo(SignValidateBase, StaticData):
+class DelMeetinfo(StaticData):
     @tornado.web.authenticated
     def get(self):
+        StaticData.init(self)
         mid = self.get_argument('mid', default=None)
         self.session.query(Meetinfo).filter(Meetinfo.mid == mid).delete()
         self.session.commit()
         self.redirect('/admin/meetinfo')
+        self.session.close()
 
-class DelType(SignValidateBase, StaticData):
+class DelType(StaticData):
     @tornado.web.authenticated
     def get(self):
+        StaticData.init(self)
         tid = self.get_argument('tid', default=None)
         self.session.query(Type).filter(Type.tid == tid).delete()
         self.session.commit()
         self.redirect('/admin#nav-type')
+        self.session.close()
 
 class AdminStatistic():
     pass
 
-class ChangeSettings(SignValidateBase, StaticData):
+class SettingsOption(StaticData):
     @tornado.web.authenticated
     def get(self):
-        pass
+        self.title = 'Settings'
+        StaticData.init(self)
+        info_path = os.path.join(self.get_template_path(), 'aboutme.md')
+        aboutcontent = open(info_path).read().decode('utf8')
+        self.render('admin_settings.html', aboutcontent = aboutcontent)
+        self.session.close()
+
+    def post(self):
+        sitename = self.get_argument('sitename', default='')
+        siteversion = self.get_argument('siteversion', default='')
+        SITESETTINGS['site_name'] = sitename
+        SITESETTINGS['site_version'] = siteversion
+        info_path = os.path.join(self.get_template_path(), 'aboutme.md')
+        aboutcontent = self.get_argument('siteabout', default='')
+        with open('info_path', 'w') as f:
+            f.write(aboutcontent.encode('utf8'))
+        self.write('<script language="javascript">alert("提交成功");self.location="/admin";</script>')

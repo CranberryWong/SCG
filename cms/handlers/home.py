@@ -8,6 +8,7 @@ import markdown
 import random
 from models.entity import User, Article, Page, Type, Contact, Inform, Meetinfo, Links
 from models.entity import getSession
+from handlers.settings import SITESETTINGS
 from handlers.admin import SignValidateBase, nameRewrite
 from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject
 from datetime import datetime
@@ -21,6 +22,8 @@ class HomeBase(object):
 
 class homeBase(SignValidateBase):
     def init(self):
+        self.sitename = SITESETTINGS['site_name']
+        self.siteversion = SITESETTINGS['site_version']
         self.session = getSession()
         self.signeduser = SignValidateBase.get_current_user(self)
         if self.signeduser:
@@ -78,6 +81,7 @@ class Home(homeBase):
         informlist = self.session.query(Inform).order_by(Inform.icettime)[:3]
         pagelist = self.session.query(Page).order_by(Page.ppubtime)[:3]
         self.render('home_index.html', pagelist = pagelist, informlist = informlist)
+        self.session.close()
 
 class ListProjects(StaticBase):
     def get(self):
@@ -90,6 +94,7 @@ class ListProjects(StaticBase):
             pagelist.insert(0, PageListObject(one))
         pageList, self.pagination = generatePagination('/projects?page=', pagelist, targetpage)
         self.render('home_plist.html', list = pageList)
+        self.session.close()
 
 class ShowProjects(StaticBase):
     def get(self, pid):
@@ -98,6 +103,7 @@ class ShowProjects(StaticBase):
         page = PageListObject(ppage)
         self.title = page.ptitle
         self.render('home_showpage.html', page = page)
+        self.session.close()
 
 class ListMembers(homeBase):
     def get(self):
@@ -110,6 +116,7 @@ class ListMembers(homeBase):
         else:
             memberlist = self.session.query(User).filter(User.ugrade == degree).filter(User.ucheck == True).all()
         self.render('home_members.html', memberlist = memberlist, mtype = mtype, degree = degree)
+        self.session.close()
 
 class ListArticles(StaticBase):
     def get(self):
@@ -121,6 +128,7 @@ class ListArticles(StaticBase):
             articlelist.insert(0, ArticleListObject(one))
         alist, self.pagination = generatePagination('/articles?page=', articlelist, targetpage)
         self.render('home_alist.html', list = alist, thisquery=None)
+        self.session.close()
 
 class ShowArticles(StaticBase):
     def get(self, id):
@@ -129,6 +137,7 @@ class ShowArticles(StaticBase):
         self.title = one.atitle
         article = ArticleListObject(one)
         self.render('home_showarticle.html', article = article)
+        self.session.close()
 
 class ShowAbout(homeBase):
     def get(self):
@@ -137,12 +146,14 @@ class ShowAbout(homeBase):
         info_path = os.path.join(self.get_template_path(), 'aboutme.md')
         aboutcontent = markdown.markdown(open(info_path).read().decode('utf8'))
         self.render('home_about.html', aboutcontent = aboutcontent)
+        self.session.close()
 
 class ShowContact(homeBase):
     def get(self):
         homeBase.init(self)
         self.title = 'Contact us'
         self.render('home_contact.html')
+        self.session.close()
 
     def post(self):
         homeBase.init(self)
@@ -163,6 +174,7 @@ class ShowContact(homeBase):
         self.session.add(contact)
         self.session.commit()
         self.write('<script language="javascript">alert("提交成功");self.location="/";</script>')
+        self.session.close()
 
 class ShowMyPage(homeBase):
     def get(self, uid):
@@ -173,6 +185,7 @@ class ShowMyPage(homeBase):
             articlelist.insert(0, ArticleListObject(article))
         self.title = user.username
         self.render('home_pagehome.html', user = user, articlelist = articlelist)
+        self.session.close()
 
 class EditArticle(homeBase):
     @tornado.web.authenticated
@@ -188,6 +201,7 @@ class EditArticle(homeBase):
         else:
             article = self.session.query(Article).filter(Article.aid == aid).first()
         self.render('home_writepage.html', typelist = typelist, uid = uid, user = user, article = article)
+        self.session.close()
 
     def post(self, uid):
         homeBase.init(self)
@@ -210,6 +224,7 @@ class EditArticle(homeBase):
             article.achgtime = datetime.now()
             self.session.commit()
             self.write('<script language="javascript">alert("提交成功");self.location="/members/m/%s"</script>'% str(uid))
+        self.session.close()
 
 class DeleteArticle(homeBase):
     @tornado.web.authenticated
@@ -219,6 +234,7 @@ class DeleteArticle(homeBase):
         self.session.query(Article).filter(Article.aid == aid).delete()
         self.session.commit()
         self.redirect('/members/m/%s' % str(uid))
+        self.session.close()
 
 class EditProfile(homeBase):
     @tornado.web.authenticated
@@ -227,6 +243,7 @@ class EditProfile(homeBase):
         user = self.session.query(User).filter(User.uid == id).first()
         self.title = 'Edit Profile'
         self.render('home_profile.html', id = id, user = user)
+        self.session.close()
 
     @tornado.web.authenticated
     def post(self, id):
@@ -256,6 +273,7 @@ class EditProfile(homeBase):
                 user.uavatar = '/static/images/' + 'avatar-'+ str(random.randint(1,16)) +'.svg'
         self.session.commit()
         self.write('<script language="javascript">alert("OK,Entering your own homepage!!");self.location="/";</script>')
+        self.session.close()
 
 class ListByDate(StaticBase):
     def get(self,year,month):
@@ -267,6 +285,7 @@ class ListByDate(StaticBase):
 
         self.title = "归档：" + str(year) + "年" + str(month) + "月"
         self.render("home_alist.html", list = list, thisquery = "归档：" + str(year) + "年" + str(month) + "月" )
+        self.session.close()
 
 class ListByType(StaticBase):
     def get(self, typename):
@@ -279,3 +298,4 @@ class ListByType(StaticBase):
 
         self.title = "Type：" + str(typename)
         self.render("home_alist.html", list = list, thisquery = "Type：" + str(typename))
+        self.session.close()

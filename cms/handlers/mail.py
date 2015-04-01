@@ -5,7 +5,7 @@ from email.mime.text import MIMEText
 from settings import MAILSETTINGS
 
 import tornado.web
-from handlers.admin import SignValidateBase
+from handlers.admin import StaticData
 import smtplib
 
 def sendmail(contact_list, content):
@@ -23,15 +23,19 @@ def sendmail(contact_list, content):
 
     return "success"
 
-class MailSending(SignValidateBase):
+class MailSending(StaticData):
     @tornado.web.authenticated
     def get(self):
+        StaticData.init(self)
         self.title = "Mail Sending"
         self.render('admin_mail.html')
+        self.session.close()
 
     def post(self):
+        StaticData.init(self)
         self.title = "Mail Sending"
         contact_list = self.get_argument('contact', default='').split(',')
         content = self.get_argument('content', default='')
         sendmail(contact_list, content)
         self.write('<script language="javascript">alert("发送成功");self.location="/admin";</script>')
+        self.session.close()

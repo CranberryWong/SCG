@@ -11,5 +11,6 @@ MAILSETTINGS = dict(
 )
 
 SITESETTINGS = dict(
-    
+    site_name = 'Social Computing Group',
+    site_version = '-Version 0.9',
 )

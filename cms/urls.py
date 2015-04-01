@@ -56,7 +56,7 @@ homeurls = [
    (r"/admin/changechecked",admin.ChangeChecked),
    (r"/admin/changelimit",admin.ChangeLimit),
 
-   (r"/admin/settings",admin.ChangeSettings),
+   (r"/admin/settings",admin.SettingsOption),
 
    (r"/admin/mail",mail.MailSending),
 
