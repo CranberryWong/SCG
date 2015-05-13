@@ -66,13 +66,13 @@ class Signout(SignValidateBase):
       self.clear_cookie('username')
       self.redirect('/')
 
-class Signup(StaticData):
+class Signup(SignValidateBase):
    def get(self):
       self.title = 'Sign Up'
       self.render('signup.html')
 
    def post(self):
-      StaticData.init(self)
+      self.session = getSession()
       username = self.get_argument('username', default='')
       password = self.get_argument('password', default='')
       passvali = self.get_argument('passvali', default='')
@@ -247,6 +247,17 @@ class ListReports(StaticData):
         contactlist = self.session.query(Contact).all()
         self.render('admin_reports.html', contactlist = contactlist)
         self.session.close()
+
+class DelReports(StaticData):
+    @tornado.web.authenticated
+    def get(self):
+        StaticData.init(self)
+        cid = self.get_argument('cid',default=None)
+        self.session.query(Contact).filter(Contact.cid == cid).delete()
+        self.session.commit()
+        self.redirect('/admin/reports')
+        self.session.close()
+
 
 class SlideOption(StaticData):
     @tornado.web.authenticated

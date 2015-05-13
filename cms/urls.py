@@ -47,6 +47,7 @@ homeurls = [
    (r"/admin/delpage",admin.DelPage),
    (r"/admin/limits",admin.EditLimits),
    (r"/admin/reports",admin.ListReports),
+   (r"/admin/delreports",admin.DelReports),
    (r"/admin/slide",admin.SlideOption),
    (r"/admin/delslide",admin.DelSlide),
    (r"/admin/link",admin.LinkOption),

@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 #coding=utf-8
 
+import logging
 import time
 import os
 import tornado.web
@@ -15,6 +16,19 @@ from datetime import datetime
 #页面通用数据
 avatar_path = os.path.join(os.path.abspath('.'), 'static/avatar/')
 resume_path = os.path.join(os.path.abspath('.'), 'static/resume/')
+homelog_path = os.path.join(os.path.abspath('.'), 'log/')
+
+logging.basicConfig(level=logging.WARNING,
+                format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                datefmt='%a, %d %b %Y %H:%M:%S',
+                filename=homelog_path + 'myapp.log',
+                filemode='w')
+
+console = logging.StreamHandler()
+console.setLevel(logging.WARNING)
+formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
+console.setFormatter(formatter)
+logging.getLogger('').addHandler(console)
 
 class HomeBase(object):
     def __init__(self):
@@ -82,6 +96,7 @@ class Home(homeBase):
         pagelist = self.session.query(Page).order_by(Page.ppubtime)[:3]
         self.render('home_index.html', pagelist = pagelist, informlist = informlist)
         self.session.close()
+        logging.warning('%s at home' % self.signeduser)
 
 class ListProjects(StaticBase):
     def get(self):

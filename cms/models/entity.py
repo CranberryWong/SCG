@@ -104,7 +104,7 @@ class Contact(Base):
 
     cid = Column(Integer, primary_key=True)
     cname = Column(String(35), nullable=False)
-    ccollege = Column(String(15), nullable=False)
+    ccollege = Column(String(30), nullable=False)
     ccemail = Column(String(30), nullable=False)
     creason = Column(Text)
     cresume = Column(String(100))
