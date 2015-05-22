@@ -1,4 +1,10 @@
 {% extends "home_page.html" %}
+{% block customCssLink %}
+<link rel="stylesheet" type="text/css" href="{{ static_url("simditor/styles/simditor.css") }}" />
+{% end %}
+{% block customJSLink %}
+
+{% end %}
 {% block subcontent %}
 <h2>Write New Article</h2>
 <form role="form" method="POST" action="/members/m/{{ uid }}/write">
@@ -9,7 +15,7 @@
   </div>
   <div class="form-group">
     <label for="exampleInputPassword1">Content</label>
-    <textarea rows="16" class="form-control" id="exampleInputPassword1" placeholder="Enter content with markdown" name="acontent">{{ article.acontent }}</textarea>
+    <textarea rows="16" class="form-control" id="editor" placeholder="Enter content with markdown" upload="True" pasteImage="True" name="acontent">{{ article.acontent }}</textarea>
   </div>
     {% for type in typelist %}
     <div class="radio">
@@ -22,4 +28,16 @@
   <button type="submit" class="btn btn-primary">Submit</button>
   <button type="reset" class="btn btn-default">Reset</button>
 </form>
+{% end %}
+{% block addJS %}
+<script type="text/javascript" src="{{static_url("simditor/scripts/module.js")}}"></script>
+<script type="text/javascript" src="{{static_url("simditor/scripts/hotkeys.js")}}"></script>
+<script type="text/javascript" src="{{static_url("simditor/scripts/uploader.js")}}"></script>
+<script type="text/javascript" src="{{static_url("simditor/scripts/simditor.js")}}"></script>
+<script>
+var editor = new Simditor({
+  textarea: $('#editor')
+});
+
+</script>
 {% end %}

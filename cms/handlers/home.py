@@ -13,6 +13,8 @@ from handlers.settings import SITESETTINGS
 from handlers.admin import SignValidateBase, nameRewrite
 from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject
 from datetime import datetime
+from PIL import Image
+from cStringIO import StringIO
 #页面通用数据
 avatar_path = os.path.join(os.path.abspath('.'), 'static/avatar/')
 resume_path = os.path.join(os.path.abspath('.'), 'static/resume/')
@@ -95,8 +97,7 @@ class Home(homeBase):
         informlist = self.session.query(Inform).order_by(Inform.icettime)[:3]
         pagelist = self.session.query(Page).order_by(Page.ppubtime)[:3]
         self.render('home_index.html', pagelist = pagelist, informlist = informlist)
-        self.session.close()
-        logging.warning('%s at home' % self.signeduser)
+
 
 class ListProjects(StaticBase):
     def get(self):
@@ -109,7 +110,7 @@ class ListProjects(StaticBase):
             pagelist.insert(0, PageListObject(one))
         pageList, self.pagination = generatePagination('/projects?page=', pagelist, targetpage)
         self.render('home_plist.html', list = pageList)
-        self.session.close()
+
 
 class ShowProjects(StaticBase):
     def get(self, pid):
@@ -118,7 +119,7 @@ class ShowProjects(StaticBase):
         page = PageListObject(ppage)
         self.title = page.ptitle
         self.render('home_showpage.html', page = page)
-        self.session.close()
+
 
 class ListMembers(homeBase):
     def get(self):
@@ -131,7 +132,7 @@ class ListMembers(homeBase):
         else:
             memberlist = self.session.query(User).filter(User.ugrade == degree).filter(User.ucheck == True).all()
         self.render('home_members.html', memberlist = memberlist, mtype = mtype, degree = degree)
-        self.session.close()
+
 
 class ListArticles(StaticBase):
     def get(self):
@@ -143,7 +144,7 @@ class ListArticles(StaticBase):
             articlelist.insert(0, ArticleListObject(one))
         alist, self.pagination = generatePagination('/articles?page=', articlelist, targetpage)
         self.render('home_alist.html', list = alist, thisquery=None)
-        self.session.close()
+
 
 class ShowArticles(StaticBase):
     def get(self, id):
@@ -152,7 +153,7 @@ class ShowArticles(StaticBase):
         self.title = one.atitle
         article = ArticleListObject(one)
         self.render('home_showarticle.html', article = article)
-        self.session.close()
+
 
 class ShowAbout(homeBase):
     def get(self):
@@ -161,14 +162,14 @@ class ShowAbout(homeBase):
         info_path = os.path.join(self.get_template_path(), 'aboutme.md')
         aboutcontent = markdown.markdown(open(info_path).read().decode('utf8'))
         self.render('home_about.html', aboutcontent = aboutcontent)
-        self.session.close()
+
 
 class ShowContact(homeBase):
     def get(self):
         homeBase.init(self)
         self.title = 'Contact us'
         self.render('home_contact.html')
-        self.session.close()
+
 
     def post(self):
         homeBase.init(self)
@@ -189,7 +190,7 @@ class ShowContact(homeBase):
         self.session.add(contact)
         self.session.commit()
         self.write('<script language="javascript">alert("提交成功");self.location="/";</script>')
-        self.session.close()
+
 
 class ShowMyPage(homeBase):
     def get(self, uid):
@@ -200,7 +201,7 @@ class ShowMyPage(homeBase):
             articlelist.insert(0, ArticleListObject(article))
         self.title = user.username
         self.render('home_pagehome.html', user = user, articlelist = articlelist)
-        self.session.close()
+
 
 class EditArticle(homeBase):
     @tornado.web.authenticated
@@ -216,7 +217,7 @@ class EditArticle(homeBase):
         else:
             article = self.session.query(Article).filter(Article.aid == aid).first()
         self.render('home_writepage.html', typelist = typelist, uid = uid, user = user, article = article)
-        self.session.close()
+
 
     def post(self, uid):
         homeBase.init(self)
@@ -239,7 +240,7 @@ class EditArticle(homeBase):
             article.achgtime = datetime.now()
             self.session.commit()
             self.write('<script language="javascript">alert("提交成功");self.location="/members/m/%s"</script>'% str(uid))
-        self.session.close()
+
 
 class DeleteArticle(homeBase):
     @tornado.web.authenticated
@@ -258,7 +259,7 @@ class EditProfile(homeBase):
         user = self.session.query(User).filter(User.uid == id).first()
         self.title = 'Edit Profile'
         self.render('home_profile.html', id = id, user = user)
-        self.session.close()
+
 
     @tornado.web.authenticated
     def post(self, id):
@@ -279,16 +280,20 @@ class EditProfile(homeBase):
             for file_dict in file_dict_list:
                 filename = nameRewrite(file_dict["filename"]).encode('utf8')
                 data = file_dict["body"]
+                image = Image.open(StringIO(data))
+                image.save(avatar_path + filename, quality=150)
+                '''
                 with open(avatar_path + filename, 'w') as f:
                     f.write(data)
-                    print filename
+                    print filename'''
             user.uavatar = '/static/avatar/' + filename
         else:
             if user.uavatar == None:
                 user.uavatar = '/static/images/' + 'avatar-'+ str(random.randint(1,16)) +'.svg'
+                print user.uavatar
         self.session.commit()
         self.write('<script language="javascript">alert("OK,Entering your own homepage!!");self.location="/";</script>')
-        self.session.close()
+
 
 class ListByDate(StaticBase):
     def get(self,year,month):
@@ -300,7 +305,7 @@ class ListByDate(StaticBase):
 
         self.title = "归档：" + str(year) + "年" + str(month) + "月"
         self.render("home_alist.html", list = list, thisquery = "归档：" + str(year) + "年" + str(month) + "月" )
-        self.session.close()
+
 
 class ListByType(StaticBase):
     def get(self, typename):
@@ -313,4 +318,3 @@ class ListByType(StaticBase):
 
         self.title = "Type：" + str(typename)
         self.render("home_alist.html", list = list, thisquery = "Type：" + str(typename))
-        self.session.close()
