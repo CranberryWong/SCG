@@ -274,6 +274,7 @@ class EditProfile(homeBase):
         user.ugrade = ugrade
         user.udomain = udomain
         user.ubio = ubio
+        print user.uavatar
         print ubio, ugrade, ucollege
         if 'file' in self.request.files:
             file_dict_list = self.request.files['file']
@@ -288,7 +289,7 @@ class EditProfile(homeBase):
                     print filename'''
             user.uavatar = '/static/avatar/' + filename
         else:
-            if user.uavatar == None:
+            if user.uavatar == '':
                 user.uavatar = '/static/images/' + 'avatar-'+ str(random.randint(1,16)) +'.svg'
                 print user.uavatar
         self.session.commit()

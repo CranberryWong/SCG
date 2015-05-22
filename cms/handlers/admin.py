@@ -11,6 +11,7 @@ from handlers.settings import SITESETTINGS
 from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject, InformObject
 import hashlib
 import json
+import random
 from datetime import datetime
 
 page_path = os.path.join(os.path.abspath('.'), 'static/page/')
@@ -85,6 +86,7 @@ class Signup(SignValidateBase):
               psw = hashlib.md5(password).hexdigest()
               newuser = User(username,psw,uemail)
               self.session.add(newuser)
+              newuser.uavatar = '/static/images/' + 'avatar-'+ str(random.randint(1,16)) +'.svg'
               self.session.commit()
               self.set_secure_cookie('username', username)
               self.write('<script language="javascript">alert("注册成功");self.location="/";</script>')
