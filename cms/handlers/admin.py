@@ -13,6 +13,7 @@ import hashlib
 import json
 import random
 from datetime import datetime
+from PIL import Image
 
 page_path = os.path.join(os.path.abspath('.'), 'static/page/')
 inform_path = os.path.join(os.path.abspath('.'), 'static/inform/')
@@ -161,10 +162,13 @@ class EditPage(StaticData):
                 for file_dict in file_dict_list:
                     filename = nameRewrite(file_dict["filename"]).encode('utf8')
                     data = file_dict["body"]
+                    image = Image.open(StringIO(data))
+                    image.save(page_path + filename, quality=150)
+                    '''
                     with open(page_path + filename, 'w') as f:
                         f.write(data)
-                        print filename
-                        page.ppic = '/static/page/' + filename
+                        print filename'''
+                    page.ppic = '/static/page/' + filename
             self.session.add(page)
             self.session.commit()
         else:
@@ -178,10 +182,9 @@ class EditPage(StaticData):
                     if page.ppic[:len(filename)-10] != '/static/page/' + filename[:len(filename)-10]:
                         print page.ppic[:len(filename)-10],'/static/page/' + filename[:len(filename)-10]
                         data = file_dict["body"]
-                        with open(page_path + filename, 'w') as f:
-                            f.write(data)
-                            print filename
-                            page.ppic = '/static/page/' + filename
+                        image = Image.open(StringIO(data))
+                        image.save(avatar_path + filename, quality=150)
+                        page.ppic = '/static/page/' + filename
             page.pchgtime = datetime.now()
             self.session.commit()
         self.write('<script language="javascript">alert("提交成功");self.location="/admin/editpage"</script>')
@@ -296,10 +299,13 @@ class SlideOption(StaticData):
                 for file_dict in file_dict_list:
                     filename = nameRewrite(file_dict["filename"]).encode('utf8')
                     data = file_dict["body"]
+                    image = Image.open(StringIO(data))
+                    image.save(inform_path + filename, quality=150)
+                    '''
                     with open(inform_path + filename, 'w') as f:
                         f.write(data)
-                        print filename
-                inform.ipic = '/static/inform/' + filename
+                        print filename'''
+                    inform.ipic = '/static/inform/' + filename
             self.session.add(inform)
             self.session.commit()
         else:
@@ -315,10 +321,13 @@ class SlideOption(StaticData):
                     if slide.iurl[:len(filename)-10] != '/static/inform/' + filename[:len(filename)-10]:
                         print inform.iurl[:len(filename)-10], '/static/inform/' + filename[:len(filename)-10]
                         data = file_dict["body"]
+                        image = Image.open(StringIO(data))
+                        image.save(inform_path + filename, quality=150)
+                        '''
                         with open(inform_path + filename, 'w') as f:
                             f.write(data)
-                            print filename
-                            slide.iurl = '/static/inform/' + filename
+                            print filename'''
+                        slide.iurl = '/static/inform/' + filename
             self.session.commit()
         self.write('<script language="javascript">alert("提交成功");self.location="/admin";</script>')
         self.session.close()

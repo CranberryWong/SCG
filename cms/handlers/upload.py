@@ -5,8 +5,10 @@ import os
 import time
 import tornado.web
 from models.entity import Upload, getSession
+from PIL import Image
+from cStringIO import StringIO
 
-upload_path = os.path.join(os.path.abspath('.'), 'static/uploadfile/')
+articles_path = os.path.join(os.path.abspath('.'), 'static/articles/')
 
 def nameRewrite(filename):
     file_timestamp = int(time.time())
@@ -33,18 +35,21 @@ def fileUpload(path):
         saveIntoDB(filename)
         self.write('success')
 
-class FileUpload(tornado.web.RequestHandler):
+class ImageUpload(tornado.web.RequestHandler):
     def get(self):
         self.render("upload.html")
 
     def post(self):
         #upload_path = os.path.join(os.path.dirname(__file__),"static"),
-        if 'file' in self.request.files:
-            file_dict_list = self.request.files['file']
+        if 'fileData' in self.request.files:
+            file_dict_list = self.request.files['fileData']
             for file_dict in file_dict_list:
                 filename = nameRewrite(file_dict["filename"]).encode('utf8')
                 data = file_dict["body"]
-                with open(upload_path + filename, 'w') as f:
-                    f.write(data)
-            saveIntoDB(filename)
-            self.write('success')
+                image = Image.open(StringIO(data))
+                image.save(articles_path + filename, quality=150)
+            self.write({
+			"success": True,
+			"msg": 'success',
+			"file_path": '/static/articles/' + filename
+		})

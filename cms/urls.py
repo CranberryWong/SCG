@@ -23,7 +23,7 @@ homeurls = [
    (r"/members",home.ListMembers),
    (r"/about",home.ShowAbout),
    (r"/contact",home.ShowContact),
-   (r"/upload?",upload.FileUpload),
+   (r"/upload?",upload.ImageUpload),
    (r"/projects/p/([0-9]+)",home.ShowProjects),
    (r"/articles/a/([0-9]+)",home.ShowArticles),
    (r"/members/m/([0-9]+)",home.ShowMyPage),
