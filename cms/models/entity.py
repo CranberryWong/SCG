@@ -208,7 +208,11 @@ class Meetinfo(Base):
 def getDBURL():
    return 'postgresql+psycopg2://%s:%s@%s:%d/%s' % (DBSETTINGS['db_user'], DBSETTINGS['db_password'], DBSETTINGS['db_host'], DBSETTINGS['db_port'], DBSETTINGS['db_name'])
 
-def getSession():
-   engine = create_engine(getDBURL())
-   Session = sessionmaker(bind=engine)
-   return Session()
+class DB_Session(object):
+    def __init__(self):
+        engine = create_engine(getDBURL())
+        self.Session = sessionmaker(bind=engine)
+
+    @property
+    def getSession(self):
+        return self.Session()

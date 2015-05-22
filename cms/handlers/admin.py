@@ -6,7 +6,7 @@ import time
 import os
 import markdown
 from models.entity import User, Article, Type, Page, Contact, Upload, Inform, Limits, Links, Meetinfo
-from models.entity import getSession
+from models.entity import DB_Session
 from handlers.settings import SITESETTINGS
 from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject, InformObject
 import hashlib
@@ -17,6 +17,8 @@ from PIL import Image
 
 page_path = os.path.join(os.path.abspath('.'), 'static/page/')
 inform_path = os.path.join(os.path.abspath('.'), 'static/inform/')
+
+db_session = DB_Session()
 
 def nameRewrite(filename):
     file_timestamp = int(time.time())
@@ -33,7 +35,7 @@ class SignValidateBase(tornado.web.RequestHandler):
 
 class StaticData(SignValidateBase):
    def init(self):
-      self.session = getSession()
+      self.session = db_session.getSession
       self.sitename = SITESETTINGS['site_name']
       self.siteversion = SITESETTINGS['site_version']
       self.signeduser = SignValidateBase.get_current_user(self)
@@ -46,7 +48,7 @@ class Signin(SignValidateBase):
       self.render('signin.html')
 
    def post(self):
-      self.session = getSession()
+      self.session = db_session.getSession
       username = self.get_argument('username', default='')
       password = self.get_argument('password', default='')
       md5_psw = hashlib.md5(password).hexdigest()
@@ -74,7 +76,7 @@ class Signup(SignValidateBase):
       self.render('signup.html')
 
    def post(self):
-      self.session = getSession()
+      self.session = db_session.getSession
       username = self.get_argument('username', default='')
       password = self.get_argument('password', default='')
       passvali = self.get_argument('passvali', default='')

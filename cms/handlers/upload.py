@@ -4,7 +4,7 @@
 import os
 import time
 import tornado.web
-from models.entity import Upload, getSession
+from models.entity import Upload, DB_Session
 from PIL import Image
 from cStringIO import StringIO
 

@@ -1,2 +1,12 @@
-Fri, 22 May 2015 21:27:58 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 8.72ms
-Fri, 22 May 2015 21:27:58 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 0.68ms
+Fri, 22 May 2015 22:14:59 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 3.44ms
+Fri, 22 May 2015 22:15:00 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 2.05ms
+Fri, 22 May 2015 22:15:00 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 0.97ms
+Fri, 22 May 2015 22:15:06 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 2.59ms
+Fri, 22 May 2015 22:15:06 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 0.89ms
+Fri, 22 May 2015 22:15:07 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 3.12ms
+Fri, 22 May 2015 22:15:07 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 2.21ms
+Fri, 22 May 2015 22:15:07 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 0.67ms
+Fri, 22 May 2015 22:15:14 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 2.62ms
+Fri, 22 May 2015 22:15:14 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 0.68ms
+Fri, 22 May 2015 22:15:14 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 2.92ms
+Fri, 22 May 2015 22:15:14 web.py[line:1780] WARNING 404 GET /static/images/avatar-01.svg (127.0.0.1) 1.07ms
