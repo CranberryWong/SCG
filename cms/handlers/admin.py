@@ -6,9 +6,9 @@ import time
 import os
 import markdown
 from models.entity import User, Article, Type, Page, Contact, Upload, Inform, Limits, Links, Meetinfo
-from models.entity import DB_Session
+from models.entity import db_session
 from handlers.settings import SITESETTINGS
-from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject, InformObject
+from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject, InformObject, UploadListObject
 import hashlib
 import json
 import random
@@ -17,8 +17,8 @@ from PIL import Image
 
 page_path = os.path.join(os.path.abspath('.'), 'static/page/')
 inform_path = os.path.join(os.path.abspath('.'), 'static/inform/')
+addon_path = os.path.join(os.path.abspath('.'), 'static/addon/')
 
-db_session = DB_Session()
 
 def nameRewrite(filename):
     file_timestamp = int(time.time())
@@ -469,3 +469,39 @@ class SettingsOption(StaticData):
         with open('info_path', 'w') as f:
             f.write(aboutcontent.encode('utf8'))
         self.write('<script language="javascript">alert("提交成功");self.location="/admin";</script>')
+
+class DownloadOption(StaticData):
+    @tornado.web.authenticated
+    def get(self):
+        StaticData.init(self)
+        self.title = 'Download Option'
+        uploadList = []
+        for one in self.session.query(Upload).all():
+            uploadList.insert(0, UploadListObject(one))
+        self.render('admin_download.html', list = uploadList)
+        self.session.close()
+
+    def post(self):
+        StaticData.init(self)
+        #upload_path = os.path.join(os.path.dirname(__file__),"static"),
+        if 'file' in self.request.files:
+            file_dict_list = self.request.files['file']
+            for file_dict in file_dict_list:
+                filename = file_dict["filename"].encode('utf8')
+                data = file_dict["body"]
+                with open(addon_path + filename, 'w') as f:
+                    f.write(data)
+            self.session.add(Upload(filename, '/static/addon/'+filename))
+            self.session.commit()
+            self.write('<script language="javascript">alert("提交成功");self.location="/admin/download"</script>')
+            self.session.close()
+
+class DelDownload(StaticData):
+    @tornado.web.authenticated
+    def get(self):
+        StaticData.init(self)
+        fileid = self.get_argument('fileid', default=None)
+        self.session.query(Upload).filter(Upload.fileid == fileid).delete()
+        self.session.commit()
+        self.redirect('/admin/download')
+        self.session.close()

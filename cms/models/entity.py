@@ -216,3 +216,5 @@ class DB_Session(object):
     @property
     def getSession(self):
         return self.Session()
+
+db_session = DB_Session()

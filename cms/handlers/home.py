@@ -7,11 +7,11 @@ import os
 import tornado.web
 import markdown
 import random
-from models.entity import User, Article, Page, Type, Contact, Inform, Meetinfo, Links
-from models.entity import DB_Session
+from models.entity import User, Article, Page, Type, Contact, Inform, Meetinfo, Links, Upload
+from models.entity import db_session
 from handlers.settings import SITESETTINGS
 from handlers.admin import SignValidateBase, nameRewrite
-from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject
+from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject, UploadListObject
 from datetime import datetime
 from PIL import Image
 from cStringIO import StringIO
@@ -31,8 +31,6 @@ console.setLevel(logging.WARNING)
 formatter = logging.Formatter('%(name)-12s: %(levelname)-8s %(message)s')
 console.setFormatter(formatter)
 logging.getLogger('').addHandler(console)
-
-db_session = DB_Session()
 
 class homeBase(SignValidateBase):
     def init(self):
@@ -319,4 +317,17 @@ class ListByType(StaticBase):
 
         self.title = "Type：" + str(typename)
         self.render("home_alist.html", list = list, thisquery = "Type：" + str(typename))
+        self.session.close()
+
+class ListDownload(StaticBase):
+    @tornado.web.authenticated
+    def get(self):
+        StaticBase.init(self)
+        self.title = 'Download'
+        targetpage = int(self.get_argument('upload',default='1'))
+        uploadList = []
+        for one in self.session.query(Upload).all():
+            uploadList.insert(0, UploadListObject(one))
+        uploadList, self.pagination = generatePagination('/download?upload=', uploadList, targetpage)
+        self.render('home_download.html', list = uploadList)
         self.session.close()

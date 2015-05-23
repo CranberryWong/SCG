@@ -21,6 +21,7 @@ homeurls = [
    (r"/projects",home.ListProjects),
    (r"/articles",home.ListArticles),
    (r"/members",home.ListMembers),
+   (r"/download",home.ListDownload),
    (r"/about",home.ShowAbout),
    (r"/contact",home.ShowContact),
    (r"/upload?",upload.ImageUpload),
@@ -56,6 +57,8 @@ homeurls = [
    (r"/admin/delmeetinfo",admin.DelMeetinfo),
    (r"/admin/changechecked",admin.ChangeChecked),
    (r"/admin/changelimit",admin.ChangeLimit),
+   (r"/admin/download",admin.DownloadOption),
+   (r"/admin/deldownload",admin.DelDownload),
 
    (r"/admin/settings",admin.SettingsOption),
 

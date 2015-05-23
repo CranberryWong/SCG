@@ -24,6 +24,13 @@ class PageListObject(object):
         self.pchgtime = page.pchgtime.ctime()[:16]
         self.ppic = page.ppic
 
+class UploadListObject(object):
+    def __init__(self, upload):
+        self.fileid = upload.fileid
+        self.filename = upload.filename
+        self.cettime = upload.cettime.ctime()[:16]
+        self.fileurl = upload.fileurl
+
 class MeetinfoObject(object):
     def __init__(self, meetinfo):
         self.mid = meetinfo.mid
