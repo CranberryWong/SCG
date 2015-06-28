@@ -92,7 +92,7 @@ class Signup(SignValidateBase):
               newuser.uavatar = '/static/images/' + 'avatar-'+ str(random.randint(1,16)) +'.svg'
               self.session.commit()
               self.set_secure_cookie('username', username)
-              self.write('<script language="javascript">alert("注册成功");self.location="/";</script>')
+              self.write('<script language="javascript">alert("注册成功");self.location="/signin";</script>')
       else:
           self.write('<script language="javascript">alert("密码不匹配");self.location="/signup";</script>')
       self.session.close()
@@ -466,7 +466,7 @@ class SettingsOption(StaticData):
         SITESETTINGS['site_version'] = siteversion
         info_path = os.path.join(self.get_template_path(), 'aboutme.md')
         aboutcontent = self.get_argument('siteabout', default='')
-        with open('info_path', 'w') as f:
+        with open(info_path, 'w') as f:
             f.write(aboutcontent.encode('utf8'))
         self.write('<script language="javascript">alert("提交成功");self.location="/admin";</script>')
 

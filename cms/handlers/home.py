@@ -198,6 +198,7 @@ class ShowMyPage(homeBase):
         for article in user.article:
             articlelist.insert(0, ArticleListObject(article))
         self.title = user.username
+        print type(user.username), type(self.signeduser)
         self.render('home_pagehome.html', user = user, articlelist = articlelist)
         self.session.close()
 
@@ -291,7 +292,7 @@ class EditProfile(homeBase):
                 user.uavatar = '/static/images/' + 'avatar-'+ str(random.randint(1,16)) +'.svg'
                 print user.uavatar
         self.session.commit()
-        self.write('<script language="javascript">alert("OK,Entering your own homepage!!");self.location="/";</script>')
+        self.write('<script language="javascript">alert("OK,Entering your own homepage!!");self.location="/members/m/%s";</script>' % str(self.signedid))
         self.session.close()
 
 class ListByDate(StaticBase):
