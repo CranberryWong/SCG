@@ -32,7 +32,7 @@ ng-app="myapp"
           <h4><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span>&nbsp;&nbsp;Archives</h4>
           <ol class="list-unstyled">
             {% for art in handler.articlebydate%}
-            <li><i class="icon-hand-right"></i>&nbsp;&nbsp;&nbsp;<a href="/q/date/{{ art['year']}}/{{ art['month'] }}">{{ art['year'] }}年{{ art['month'] }}月（{{ art['num'] }}篇）</a></li>
+            <li><i class="icon-hand-right"></i>&nbsp;&nbsp;&nbsp;<a href="/q/date/{{ art['year']}}/{{ art['month'] }}">{{ art['year'] }}-{{ art['month'] }}（{{ art['num'] }}）</a></li>
             {% end %}
           </ol>
         </div>

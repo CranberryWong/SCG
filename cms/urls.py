@@ -18,6 +18,7 @@ homeurls = [
 
    #前台
    (r"/",home.Home),
+   (r"/news",home.ListNews),
    (r"/projects",home.ListProjects),
    (r"/articles",home.ListArticles),
    (r"/members",home.ListMembers),
@@ -25,6 +26,7 @@ homeurls = [
    (r"/about",home.ShowAbout),
    (r"/contact",home.ShowContact),
    (r"/upload?",upload.ImageUpload),
+   (r"/news/n/([0-9]+)",home.ShowNews),
    (r"/projects/p/([0-9]+)",home.ShowProjects),
    (r"/articles/a/([0-9]+)",home.ShowArticles),
    (r"/members/m/([0-9]+)",home.ShowMyPage),

@@ -7,11 +7,11 @@ import os
 import tornado.web
 import markdown
 import random
-from models.entity import User, Article, Page, Type, Contact, Inform, Meetinfo, Links, Upload
+from models.entity import User, Article, Page, News, Type, Contact, Inform, Meetinfo, Links, Upload
 from models.entity import db_session
 from handlers.settings import SITESETTINGS
 from handlers.admin import SignValidateBase, nameRewrite
-from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject, UploadListObject
+from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject, UploadListObject, NewsListObject
 from datetime import datetime
 from PIL import Image
 from cStringIO import StringIO
@@ -118,6 +118,27 @@ class ShowProjects(StaticBase):
         self.render('home_showpage.html', page = page)
         self.session.close()
 
+class ListNews(StaticBase):
+    def get(self):
+        #homeBase.init(self)
+        StaticBase.init(self)
+        self.title = 'News'
+        targetpage = int(self.get_argument('page',default='1'))
+        newslist = []
+        for one in self.session.query(News).all():
+            newslist.insert(0, NewsListObject(one))
+        newsList, self.pagination = generatePagination('/news?page=', newslist, targetpage)
+        self.render('home_plist.html', list = newsList)
+        self.session.close()
+
+class ShowNews(StaticBase):
+    def get(self, nid):
+        StaticBase.init(self)
+        nnews = self.session.query(News).filter(News.nid == nid).first()
+        news = PageListObject(nnews)
+        self.title = news.ptitle
+        self.render('home_showpage.html', news = news)
+        self.session.close()
 
 class ListMembers(homeBase):
     def get(self):
@@ -198,7 +219,6 @@ class ShowMyPage(homeBase):
         for article in user.article:
             articlelist.insert(0, ArticleListObject(article))
         self.title = user.username
-        print type(user.username), type(self.signeduser)
         self.render('home_pagehome.html', user = user, articlelist = articlelist)
         self.session.close()
 

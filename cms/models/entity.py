@@ -99,6 +99,24 @@ class Page(Base):
     def __repr__(self):
         return "<Page('%s')>" % (self.ptitle)
 
+class News(Base):
+    __tablename__ = 'news'
+
+    nid = Column(Integer, primary_key=True)
+    ntitle = Column(String(60), nullable=False)
+    ncontent = Column(Text)
+    npubtime = Column(DateTime, nullable=False)
+    nchgtime = Column(DateTime, nullable=False)
+
+    def __init__(self, ntitle, ncontent):
+        self.ntitle = ntitle
+        self.ncontent = ncontent
+        self.npubtime = datetime.now()
+        self.nchgtime = datetime.now()
+
+    def __repr__(self):
+        return "<News('%s')>" % (self.ntitle)
+
 class Contact(Base):
     __tablename__ = 'contacts'
 
