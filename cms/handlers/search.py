@@ -2,8 +2,8 @@
 #coding:utf-8
 
 from handlers.home import StaticBase, generatePagination
-from handlers.generateObject import ArticleListObject
-from models.entity import Article
+from handlers.generateObject import ArticleListObject, NewsListObject, PageListObject
+from models.entity import Article, News, Page
 import tornado.web
 
 class ListSearch(StaticBase):
@@ -17,7 +17,8 @@ class ListSearch(StaticBase):
                 articles.insert(0, article)
 
         articlelist = [ArticleListObject(article) for article in articles]
-
+        newslist = list(map(lambda one: NewsListObject(one), self.session.query(News).all()))
+        pagelist = list(map(lambda one: PageListObject(one), self.session.query(Page).all()))
         list, self.pagination = generatePagination('/search?keyword=' + keyword + '&page=', articlelist, targetpage)
 
         self.title = "搜索：" + keyword.encode('utf8')

@@ -5,10 +5,10 @@ import tornado.web
 import time
 import os
 import markdown
-from models.entity import User, Article, Type, Page, Contact, Upload, Inform, Limits, Links, Meetinfo
+from models.entity import User, Article, Type, Page, News, Contact, Upload, Inform, Limits, Links, Meetinfo
 from models.entity import db_session
 from handlers.settings import SITESETTINGS
-from handlers.generateObject import ArticleListObject, PageListObject, MeetinfoObject, InformObject, UploadListObject
+from handlers.generateObject import ArticleListObject, NewsListObject, PageListObject, MeetinfoObject, InformObject, UploadListObject
 import hashlib
 import json
 import random
@@ -52,7 +52,12 @@ class Signin(SignValidateBase):
       username = self.get_argument('username', default='')
       password = self.get_argument('password', default='')
       md5_psw = hashlib.md5(password).hexdigest()
-      user = self.session.query(User).filter(User.username==username).one()
+      try:
+          user = self.session.query(User).filter(User.username==username).one()
+      except Exception as e:
+          print e
+          #return self.write('<script language="javascript">alert("找不到该用户");self.location="/signin";</script>')
+          return self.write('<script language="javascript">alert("{0}");self.location="/signin";</script>'.format('没有找到该用户！'))                                  
       uname = user.username
       psw = user.password
       if username == uname and md5_psw == psw:
@@ -62,7 +67,7 @@ class Signin(SignValidateBase):
           else:
               self.write('<script language="javascript">alert("对不起，账户需管理员确认后方能生效");self.location="/signin";</script>')
       else:
-         self.write('<script language="javascript">alert("用户名或密码错误");self.location="/signin";</script>')
+          self.write('<script language="javascript">alert("用户名或密码错误");self.location="/signin";</script>')
       self.session.close()
 
 class Signout(SignValidateBase):
@@ -112,13 +117,14 @@ class AdminHome(StaticData):
         for one in ppagelist:
             pagelist.insert(0, PageListObject(one))
         typelist = self.session.query(Type).all()
+        newslist = list(map(lambda one: NewsListObject(one), self.session.query(News).all()))
         tid = self.get_argument('tid', default=None)
         if tid == None:
             typeobj = Type('')
             typeobj.tid = None
         else:
             typeobj = self.session.query(Type).filter(Type.tid == tid).first()
-        self.render('admin_overview.html', userlist = userlist, articlelist = articlelist, pagelist = pagelist, typelist = typelist, typeobj = typeobj)
+        self.render('admin_overview.html', userlist = userlist, articlelist = articlelist, pagelist = pagelist, typelist = typelist, typeobj = typeobj, newslist = newslist)
         self.session.close()
 
     def post(self):
@@ -198,6 +204,49 @@ class DelPage(StaticData):
         StaticData.init(self)
         pid = self.get_argument('pid', default=None)
         self.session.query(Page).filter(Page.pid == pid).delete()
+        self.session.commit()
+        self.redirect('/admin')
+        self.session.close()
+
+class EditNews(StaticData):
+    @tornado.web.authenticated
+    def get(self):
+        StaticData.init(self)
+        self.title = 'Dashboard Edit'
+        nid = self.get_argument('nid', default=None)
+        if nid == None:
+            news = News('','')
+            news.nid = None
+        else:
+            news = self.session.query(News).filter(News.nid == nid).first()
+        self.render('admin_editnews.html', active9 = 'class="active"', news = news)
+        self.session.close()
+
+    def post(self):
+        self.title = 'Dashboard Edit'
+        StaticData.init(self)
+        nid = self.get_argument('nid', default='None')
+        ntitle = self.get_argument('ntitle', default='')
+        ncontent = self.get_argument('ncontent', default='')
+        if nid == 'None':
+            news = News(ntitle, ncontent)
+            self.session.add(news)
+            self.session.commit()
+        else:
+            news = self.session.query(News).filter(News.nid == nid).first()
+            news.ntitle = ntitle
+            news.ncontent = ncontent
+            news.nchgtime = datetime.now()
+            self.session.commit()
+        self.write('<script language="javascript">alert("提交成功");self.location="/admin/editnews"</script>')
+        self.session.close()
+
+class DelNews(StaticData):
+    @tornado.web.authenticated
+    def get(self):
+        StaticData.init(self)
+        nid = self.get_argument('nid', default=None)
+        self.session.query(News).filter(News.nid == nid).delete()
         self.session.commit()
         self.redirect('/admin')
         self.session.close()

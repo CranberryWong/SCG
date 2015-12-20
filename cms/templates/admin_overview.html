@@ -25,18 +25,14 @@ $('#myTab a').click(function (e) {
 {% end %}
 {% block maincontent %}
 <ul id="myTab" class="nav nav-tabs" role="tablist">
-      <li role="presentation" class="active"><a href="#home" id="home-tab" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="true">Users</a></li>
-      <li role="presentation" class=""><a href="#profile" role="tab" id="profile-tab" data-toggle="tab" aria-controls="profile" aria-expanded="false">Articles</a></li>
-      <li role="presentation" class="dropdown">
-        <a href="#" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown" aria-controls="myTabDrop1-contents" aria-expanded="false">More <span class="caret"></span></a>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1" id="myTabDrop1-contents">
-          <li><a href="#dropdown1" tabindex="-1" role="tab" id="dropdown1-tab" data-toggle="tab" aria-controls="dropdown1">Pages</a></li>
-          <li><a href="#dropdown2" tabindex="-1" role="tab" id="dropdown2-tab" data-toggle="tab" aria-controls="dropdown2">Types</a></li>
-        </ul>
-      </li>
+      <li role="presentation" class="active"><a href="#user" id="user-tab" role="tab" data-toggle="tab" aria-controls="user" aria-expanded="true">Users</a></li>
+      <li role="presentation" class=""><a href="#article" role="tab" id="article-tab" data-toggle="tab" aria-controls="article" aria-expanded="false">Articles</a></li>
+      <li role="presentation" class=""><a href="#page" id="page-tab" role="tab" data-toggle="tab" aria-controls="page" aria-expanded="true">Pages</a></li>
+      <li role="presentation" class=""><a href="#type" role="tab" id="type-tab" data-toggle="tab" aria-controls="type" aria-expanded="false">Types</a></li>
+      <li role="presentation" class=""><a href="#news" role="tab" id="news-tab" data-toggle="tab" aria-controls="news" aria-expanded="false">News</a></li>
     </ul>
     <div id="myTabContent" class="tab-content">
-      <div role="tabpanel" class="tab-pane fade active in" id="home" aria-labelledby="home-tab">
+      <div role="tabpanel" class="tab-pane fade active in" id="user" aria-labelledby="user-tab">
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
@@ -61,7 +57,7 @@ $('#myTab a').click(function (e) {
             </tbody>
           </table>
         </div>      </div>
-      <div role="tabpanel" class="tab-pane fade" id="profile" aria-labelledby="profile-tab">
+      <div role="tabpanel" class="tab-pane fade" id="article" aria-labelledby="article-tab">
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
@@ -86,7 +82,7 @@ $('#myTab a').click(function (e) {
             </tbody>
           </table>
         </div>      </div>
-      <div role="tabpanel" class="tab-pane fade" id="dropdown1" aria-labelledby="dropdown1-tab">
+      <div role="tabpanel" class="tab-pane fade" id="page" aria-labelledby="page-tab">
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
@@ -112,7 +108,7 @@ $('#myTab a').click(function (e) {
             </tbody>
           </table>
         </div>      </div>
-      <div role="tabpanel" class="tab-pane fade" id="dropdown2" aria-labelledby="dropdown2-tab">
+      <div role="tabpanel" class="tab-pane fade" id="type" aria-labelledby="type-tab">
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
@@ -142,6 +138,32 @@ $('#myTab a').click(function (e) {
         </form>
         </div>
         </div>
+              <div role="tabpanel" class="tab-pane fade" id="news" aria-labelledby="news-tab">
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Publish Time</th>
+                <th>Change Time</th>
+                <th>Option</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for news in newslist %}
+              <tr>
+                <td>{{ news.nid }}</td>
+                <td>{{ news.ntitle }}</td>
+                <td>{{ news.npubtime }}</td>
+                <td>{{ news.nchgtime }}</td>
+                <td><div><span><a href="/admin/editnews?nid={{ news.nid }}">Edit</a></span>&nbsp;&nbsp;|&nbsp;&nbsp;<span><a href="/admin/delnews?nid={{ news.nid }}">Delete</a></span></div>
+        </td>
+              </tr>
+              {% end %}
+            </tbody>
+          </table>
+        </div>      </div>
       </div>
     </div>
 {% end %}

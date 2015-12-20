@@ -14,7 +14,11 @@
         </div>
         <div class="form-group">
           <label for="exampleInputGrade">Your Grade</label>
-          <input type="input" class="form-control" id="exampleInputGrade" placeholder="Grade" name="ugrade" value="{{ user.ugrade }}">
+          <select name="ugrade" id="exampleInputGrade" class="form-control" >
+            {% for item in handler.mytypedict %}
+            <option value="{{ item }}" {% if item == user.ugrade %} selected {% end %}>{{ handler.mytypedict[item] }}</option>
+            {% end %}
+          </select>
         </div>
         <div class="form-group">
           <label for="exampleInputmajorin">Major in</label>

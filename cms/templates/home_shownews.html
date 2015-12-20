@@ -1,0 +1,15 @@
+{% extends "home_listbase.html" %}
+
+{% block active9 %}class="active"{% end %}
+    {% block submaincontent %}
+
+
+          <div class="blog-post">
+            <h2 class="blog-post-title">{{ news.ntitle }}</h2>
+            <p class="blog-post-meta">Create time:{{ news.npubtime }}&nbsp;&nbsp;&nbsp;&nbsp;Change time:{{ news.nchgtime }}</p>
+            <P> {{ news.ncontent }}</p>
+          </div><!-- /.blog-post -->
+
+
+    {% end %}
+    <!-- /END THE FEATURETTES -->

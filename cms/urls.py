@@ -48,6 +48,8 @@ homeurls = [
    (r"/admin/deltype",admin.DelType),
    (r"/admin/editpage",admin.EditPage),
    (r"/admin/delpage",admin.DelPage),
+   (r"/admin/editnews",admin.EditNews),
+   (r"/admin/delnews",admin.DelNews),
    (r"/admin/limits",admin.EditLimits),
    (r"/admin/reports",admin.ListReports),
    (r"/admin/delreports",admin.DelReports),

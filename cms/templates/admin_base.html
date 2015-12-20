@@ -45,7 +45,6 @@
         <ul class="nav navbar-nav navbar-right">
           <li><a href="/admin">Dashboard</a></li>
           <li><a href="/admin/settings">Settings</a></li>
-          <li><a href="/admin/mail">Mail</a></li>
           <li><a href="/signout">Signout</a></li>
         </ul>
         <form class="navbar-form navbar-right" method="GET" action="/search">
@@ -60,6 +59,7 @@
       <div class="col-sm-3 col-md-2 sidebar">
         <ul class="nav nav-sidebar">
           <li {% block active1 %}{% end %}><a href="/admin">Overview</a></li>
+          <li {% block active9 %}{% end %}><a href="/admin/editnews">Edit News</a></li>
           <li {% block active2 %}{% end %}><a href="/admin/editpage">Edit Page</a></li>
           <li {% block active3 %}{% end %}><a href="/admin/limits">Limits</a></li>
           <li {% block active4 %}{% end %}><a href="/admin/reports">Reports</a></li>

@@ -13,13 +13,13 @@ class User(Base):
    __tablename__ = 'users'
 
    uid = Column(Integer, primary_key=True)
-   username = Column(String(35))
-   password = Column(String(35))
-   uemail = Column(String(30))
+   username = Column(String(35), nullable=False)
+   password = Column(String(35), nullable=False)
+   uemail = Column(String(30), nullable=False)
    ubio = Column(Text)
    ucheck = Column(Boolean)
    ucollege = Column(String(30))
-   ugrade = Column(String(10))
+   ugrade = Column(Integer)
    udomain = Column(Text)
    uavatar = Column(String(100))
    luid = Column(Integer, ForeignKey('limits.lid'))
@@ -33,7 +33,7 @@ class User(Base):
       self.ubio = ''
       self.ucheck = False
       self.ucollege = ''
-      self.ugrade = ''
+      self.ugrade = 1
       self.udomain = ''
       self.uavatar = ''
       self.luid = 1

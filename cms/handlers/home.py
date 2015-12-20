@@ -4,6 +4,7 @@
 import logging
 import time
 import os
+import json
 import tornado.web
 import markdown
 import random
@@ -34,6 +35,7 @@ logging.getLogger('').addHandler(console)
 
 class homeBase(SignValidateBase):
     def init(self):
+        self.mytypedict = { 1: 'Bachelor', 2: 'Master', 3: 'Ph.D', 4: 'Guest Prof', 5: 'Professor'}
         self.sitename = SITESETTINGS['site_name']
         self.siteversion = SITESETTINGS['site_version']
         self.session = db_session.getSession
@@ -91,7 +93,8 @@ class Home(homeBase):
         self.title = 'Home'
         informlist = self.session.query(Inform).order_by(Inform.icettime)[:3]
         pagelist = self.session.query(Page).order_by(Page.ppubtime)[:3]
-        self.render('home_index.html', pagelist = pagelist, informlist = informlist)
+        newslist = list(map(lambda one: NewsListObject(one), self.session.query(News).order_by(News.npubtime)[:7]))
+        self.render('home_index.html', pagelist = pagelist, informlist = informlist, newslist = newslist)
         self.session.close()
 
 
@@ -127,30 +130,25 @@ class ListNews(StaticBase):
         newslist = []
         for one in self.session.query(News).all():
             newslist.insert(0, NewsListObject(one))
-        newsList, self.pagination = generatePagination('/news?page=', newslist, targetpage)
-        self.render('home_plist.html', list = newsList)
+        newsList, self.pagination = generatePagination('/news?news=', newslist, targetpage)
+        self.render('home_nlist.html', list = newsList)
         self.session.close()
 
 class ShowNews(StaticBase):
     def get(self, nid):
         StaticBase.init(self)
         nnews = self.session.query(News).filter(News.nid == nid).first()
-        news = PageListObject(nnews)
-        self.title = news.ptitle
-        self.render('home_showpage.html', news = news)
+        news = NewsListObject(nnews)
+        self.title = news.ntitle
+        self.render('home_shownews.html', news = news)
         self.session.close()
 
 class ListMembers(homeBase):
     def get(self):
         homeBase.init(self)
         self.title = 'Members'
-        mtype = ['All', 'Master', 'Ph.D', 'Bachelor', 'Professor', 'Guest Prof']
-        degree = self.get_argument('degree', default='All')
-        if degree == 'All':
-            memberlist = self.session.query(User).filter(User.ucheck == True).all()
-        else:
-            memberlist = self.session.query(User).filter(User.ugrade == degree).filter(User.ucheck == True).all()
-        self.render('home_members.html', memberlist = memberlist, mtype = mtype, degree = degree)
+        memberlist = self.session.query(User).filter(User.ucheck == True).order_by(User.ugrade.desc()).all()
+        self.render('home_members.html', memberlist = memberlist)
         self.session.close()
 
 class ListArticles(StaticBase):

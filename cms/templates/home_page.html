@@ -5,7 +5,7 @@
   <div class="container">
   <img class="home-page-img featurette-image img-responsive img-circle" src="{{ user.uavatar }}" alt="Generic placeholder image" style="margin:0 auto;border:4px solid white;">
   <h2 style="color:white;">{{ user.username }}</h2>
-  <h4 style="color:white;">{{ user.ucollege }}{{ ', '+user.ugrade }}</h4>
+  <h4 style="color:white;">{{ user.ucollege+' ' }}{{ handler.mytypedict[user.ugrade] }}</h4>
   {% if handler.signeduser == user.username.encode('utf8') %}
   <a href="/members/m/{{ user.uid }}/write"><button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span>&nbsp;&nbsp;Add article</button></a>&nbsp;&nbsp;<a href="/members/m/{{ user.uid }}/profile"><button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;&nbsp;Edit profile</button></a>
   {% end %}
