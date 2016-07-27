@@ -57,7 +57,7 @@ class Signin(SignValidateBase):
       except Exception as e:
           print e
           #return self.write('<script language="javascript">alert("找不到该用户");self.location="/signin";</script>')
-          return self.write('<script language="javascript">alert("{0}");self.location="/signin";</script>'.format('没有找到该用户！'))                                  
+          return self.write('<script language="javascript">alert("{0}");self.location="/signin";</script>'.format('没有找到该用户！'))
       uname = user.username
       psw = user.password
       if username == uname and md5_psw == psw:

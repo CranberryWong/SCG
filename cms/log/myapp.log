@@ -1,0 +1,13 @@
+Tue, 12 Jul 2016 17:06:33 web.py[line:1357] ERROR Uncaught exception GET / (127.0.0.1)
+HTTPRequest(protocol='http', host='127.0.0.1:8080', method='GET', uri='/', version='HTTP/1.1', remote_ip='127.0.0.1', headers={'Accept-Language': 'zh-cn', 'Accept-Encoding': 'gzip, deflate', 'Host': '127.0.0.1:8080', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/601.7.6 (KHTML, like Gecko) Version/9.1.2 Safari/601.7.6', 'Connection': 'keep-alive', 'Cookie': '_ga=GA1.1.811470881.1468308997; username="2|1:0|10:1468309781|8:username|12:V2FuZyBDaGVu|7f341e6d44f5cd589f67b39603cc8f01793fb8eafc611d1ab6d42ad64c59c3a7"', 'If-None-Match': '"4b9e373ac3830ebfa610b03a02267dee7e3c08f0"'})
+Traceback (most recent call last):
+  File "/Library/Python/2.7/site-packages/tornado-3.2.1-py2.7-macosx-10.9-intel.egg/tornado/web.py", line 1270, in _when_complete
+    callback()
+  File "/Library/Python/2.7/site-packages/tornado-3.2.1-py2.7-macosx-10.9-intel.egg/tornado/web.py", line 1291, in _execute_method
+    self._when_complete(method(*self.path_args, **self.path_kwargs),
+  File "/Users/cheesewong/PyProjects/simple/cms/handlers/home.py", line 92, in get
+    homeBase.init(self)
+  File "/Users/cheesewong/PyProjects/simple/cms/handlers/home.py", line 45, in init
+    self.signedid = self.user.uid
+AttributeError: 'NoneType' object has no attribute 'uid'
+Tue, 12 Jul 2016 17:06:33 web.py[line:1780] ERROR 500 GET / (127.0.0.1) 216.91ms
